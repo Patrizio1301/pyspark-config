@@ -3,7 +3,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-from src.spark_utils.spark_session.sparkSession import arranca_spark
+from spark_utils import arranca_spark
 
 class ConfigReader(object):
     def __init__(self, yaml_path: str, spark_session=None):

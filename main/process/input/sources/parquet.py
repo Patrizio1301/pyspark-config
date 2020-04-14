@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from sanformer.main.process.input.sources.source import Source
-from spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
+from main.process.input.sources.source import Source
+from spark_utils import DataFrame_Extended
 
 @dataclass
 class Parquet(Source):

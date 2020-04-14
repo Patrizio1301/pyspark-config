@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 
-from sanformer.main.process.input.sources.source import Source
-from sanformer.main.dfo import DFO
+from main.process.input.sources.source import Source
+from process.dfo import DFO
 
 @dataclass
 class Process(Source):

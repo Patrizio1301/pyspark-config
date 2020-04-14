@@ -1,7 +1,7 @@
-from sanformer.main.process.output.types.csv import Csv
-from sanformer.main.process.output.types.json import Json
-from sanformer.main.process.output.types.plot import Plot
-from sanformer.main.process.output.types.parquet import Parquet
+from main.process.output.types.csv import Csv
+from main.process.output.types.json import Json
+from main.process.output.types.plot import Plot
+from main.process.output.types.parquet import Parquet
 
 class Constructor(object):
 

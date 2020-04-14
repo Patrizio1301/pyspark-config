@@ -1,5 +1,5 @@
 from typing import List
-from src.sanformer.main.process.process import Process
+from main.process.process import Process
 
 class Processor(object):
     processes: List[Process]=None

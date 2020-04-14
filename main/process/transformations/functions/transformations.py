@@ -1,4 +1,4 @@
-from src.spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
+from spark_utils import DataFrame_Extended
 from typing import List
 
 class Transformation_List(object):

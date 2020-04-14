@@ -1,4 +1,4 @@
-from spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
+from spark_utils import DataFrame_Extended
 from dataclasses import dataclass
 from typing import List
 

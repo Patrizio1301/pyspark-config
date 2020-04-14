@@ -1,9 +1,8 @@
 from dataclasses import dataclass
-from sanformer.main.process.configuration.config_reader import ConfigReader
-from sanformer.main.process.configuration.transformation_config_reader import TransformationConfig
-from spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
-from sanformer.main.process.transformations.functions.transformations import Transformation_List
-from sanformer.main.process.transformations.transformation import Transformations
+from main.process.configuration.config_reader import ConfigReader
+from main.process.configuration.transformation_config_reader import TransformationConfig
+from main.process.transformations.functions.transformations import Transformation_List
+from main.process.transformations.transformation import Transformations
 
 @dataclass
 class Source:

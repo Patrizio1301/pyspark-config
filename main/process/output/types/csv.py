@@ -1,10 +1,9 @@
 from dataclasses import dataclass
-from sanformer.main.process.transformations.transformation import Transformations
-from sanformer.main.process.transformations.functions.transformations import Transformation_List
-from pandas_utils.pandas_extended import pandas_extended
-from spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
+from main.process.transformations.transformation import Transformations
+from main.process.transformations.functions.transformations import Transformation_List
+from spark_utils import DataFrame_Extended
 import logging
-from sanformer.main.process.output.output import Output
+from main.process.output.output import Output
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
-from sanformer.main.process.transformations.transformation import Transformation
-from spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
+from main.process.transformations.transformation import Transformation
+from spark_utils import DataFrame_Extended
 import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

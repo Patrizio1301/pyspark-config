@@ -1,6 +1,6 @@
-from sanformer.main.process.input.sources.lake import Lake
-from sanformer.main.process.input.sources.csv import Csv
-from sanformer.main.process.input.sources.parquet import Parquet
+from main.process.input.sources.lake import Lake
+from main.process.input.sources.csv import Csv
+from main.process.input.sources.parquet import Parquet
 
 class Constructor(object):
 

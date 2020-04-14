@@ -1,11 +1,11 @@
-from sanformer.main.process.transformations.functions.input_transformations import DataFrame_Creation, DataFrame_Input_Transformations
+from main.process.transformations.functions.input_transformations import DataFrame_Creation, DataFrame_Input_Transformations
 from dataclasses import dataclass
-from sanformer.main.process.transformations.transformation import Transformation
+from main.process.transformations.transformation import Transformation
 from typing import List
 import logging
-from sanformer.main.dfo import DFO
-from sanformer.main.process.input.sources.source import Source
-from sanformer.main.process.input.sources.constructor import Constructor
+from process.dfo import DFO
+from main.process.input.sources.source import Source
+from main.process.input.sources.constructor import Constructor
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
