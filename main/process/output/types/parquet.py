@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from main.process.transformations.transformation import Transformations
 from main.process.transformations.functions.transformations import Transformation_List
 from main.process.transformations.transformation import Transformation
-from spark_utils import DataFrame_Extended
+from main.spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
 import logging
 from main.process.output.output import Output
 logging.basicConfig(level=logging.INFO)

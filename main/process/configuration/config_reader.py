@@ -1,13 +1,15 @@
 import yaml
 import logging
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-from spark_utils import arranca_spark
+from main.spark_utils.spark_session.sparkSession import arranca_spark
+
 
 class ConfigReader(object):
     def __init__(self, yaml_path: str, spark_session=None):
-        self.spark_session_=spark_session
+        self.spark_session_ = spark_session
         self.yaml_path = yaml_path
 
     @property
@@ -18,7 +20,7 @@ class ConfigReader(object):
         if self.spark_session_:
             return self.spark_session_
         else:
-            session_name=self.configuration["session_name"]
+            session_name = self.configuration["session_name"]
             return arranca_spark(session_name)
 
     @property
@@ -32,10 +34,3 @@ class ConfigReader(object):
         """
         with open(self.yaml_path, 'r') as ymlfile:
             return yaml.load(ymlfile)
-
-
-
-
-
-
-

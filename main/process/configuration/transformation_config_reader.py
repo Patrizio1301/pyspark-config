@@ -2,7 +2,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-from sanformer.main.process.transformations.transformation import Transformation
+from main.process.transformations.transformation import Transformation
 
 class TransformationConfig(object):
     def __init__(self, config, spark_session=None):

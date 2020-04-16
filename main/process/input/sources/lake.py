@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from main.process.input.sources.source import Source
 from spark_utils.table_from_database import Table
-from spark_utils import DataFrame_Extended
+from main.spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
 
 @dataclass
 class Lake(Source):

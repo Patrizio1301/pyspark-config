@@ -1,4 +1,4 @@
-from src.spark_utils.spark_session.sparkSession import arranca_spark
+from main.spark_utils.spark_session.sparkSession import arranca_spark
 
 class Table(object):
 

@@ -1,4 +1,4 @@
-from process import Source
+from main.process.input.sources.source import Source
 
 def test_sum():
     assert sum([1, 2, 3]) == 6
