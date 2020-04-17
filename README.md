@@ -1,6 +1,10 @@
-# Project Title
+# Pyspark-config
 
-One Paragraph of project description goes here
+Pyspark-Config is a Python module for 
+
+The project was started in 2007 by David Cournapeau as a Google Summer of Code project, and since then many volunteers have contributed. See the About us page for a list of core contributors.
+
+It is currently maintained by a team of volunteers.
 
 ## Getting Started
 
@@ -9,6 +13,14 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 What things you need to install the software and how to install them
+
+Pyspark-config requires:
+
+Python (>= 3.6)
+Pyspark (>= 2.4.5)
+PyYaml (>= 5.3.1)
+Dataclass (>= 0.0.0)
+
 
 ```
 Give examples
