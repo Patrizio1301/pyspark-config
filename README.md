@@ -9,24 +9,16 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installation
 
-## Dependencies
+#### Dependencies
 
 <ul>
   <li>Python (>= 3.6)</li>
   <li>Pyspark (>= 2.4.5)</li>
+  <li>PyYaml (>= 5.3.1)</li>
+  <li>Dataclass (>= 0.0.0)</li>
 </ul>
 
-Python (>= 3.6)
-Pyspark (>= 2.4.5)
-PyYaml (>= 5.3.1)
-Dataclass (>= 0.0.0)
-
-
-```
-Give examples
-```
-
-### Installing
+### User installation
 
 A step by step series of examples that tell you how to get a development env running
 
@@ -43,6 +35,10 @@ until finished
 ```
 
 End with an example of getting some data out of the system or using it for a little demo
+
+### Changelog
+
+See the changelog for a history of notable changes to scikit-learn.
 
 ## Running the tests
 
