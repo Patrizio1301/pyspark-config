@@ -1,7 +1,5 @@
 import sys
 
-from setuptools import setup
-
 DISTNAME = 'pyspark-config'
 DESCRIPTION = 'Configurable data pipeline with Pyspark'
 with open('README.rst') as f:
@@ -49,6 +47,16 @@ def setup_package():
                     ],
                     package_data={'': ['*.pxd']}
                     )
+    
+    if len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
+        sys.argv[1] in ('--help-commands', 'egg_info', '--version',
+                        'clean')):
+    # Use setuptools for these commands (they don't work well or at all
+    # with distutils).  For normal builds use distutils.
+    try:
+        from setuptools import setup
+    except ImportError:
+        from distutils.core import setup
 
     setup(**metadata)
 
