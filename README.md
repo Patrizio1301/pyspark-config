@@ -1,20 +1,20 @@
 # Pyspark-config
 
-Pyspark-Config is a Python module for 
+Pyspark-Config is a Python module for pyspark use with the help of a configuration file, granting access to build distributed data piplines with configurable input and output. 
 
-The project was started in 2007 by David Cournapeau as a Google Summer of Code project, and since then many volunteers have contributed. See the About us page for a list of core contributors.
-
-It is currently maintained by a team of volunteers.
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
+### Installation
 
-What things you need to install the software and how to install them
+## Dependencies
 
-Pyspark-config requires:
+<ul>
+  <li>Python (>= 3.6)</li>
+  <li>Pyspark (>= 2.4.5)</li>
+</ul>
 
 Python (>= 3.6)
 Pyspark (>= 2.4.5)
