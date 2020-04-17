@@ -80,7 +80,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Patrizio1301** - *Initial work* - [PurpleBooth](https://github.com/Patrizio1301)
+* **Patrizio Guagliardo** - [Patrizio1301](https://github.com/Patrizio1301)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
