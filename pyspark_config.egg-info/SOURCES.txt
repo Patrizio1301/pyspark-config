@@ -1,0 +1,7 @@
+README.md
+setup.py
+pyspark_config.egg-info/PKG-INFO
+pyspark_config.egg-info/SOURCES.txt
+pyspark_config.egg-info/dependency_links.txt
+pyspark_config.egg-info/requires.txt
+pyspark_config.egg-info/top_level.txt

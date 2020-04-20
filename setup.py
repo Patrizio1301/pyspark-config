@@ -1,11 +1,12 @@
+from setuptools import setup
 import sys
 
 DISTNAME = 'pyspark-config'
 DESCRIPTION = 'Configurable data pipeline with Pyspark'
-with open('README.rst') as f:
+with open('README.md') as f:
     LONG_DESCRIPTION = f.read()
-MAINTAINER = 'Patrizio Guagliardo'
-MAINTAINER_EMAIL = 'patrizio.guagliardo@gmx.de'
+AUTHOR = 'Patrizio Guagliardo'
+AUTHOR_EMAIL = 'patrizio.guagliardo@gmx.de'
 LICENSE = 'new BSD'
 URL = 'https://github.com/pypa/pyspark-config'
 VERSION = '0.0.1'
@@ -16,16 +17,15 @@ DATACLASS_MIN_VERSION = '0.0'
 
 def setup_package():
     metadata = dict(name=DISTNAME,
-                    maintainer=MAINTAINER,
-                    maintainer_email=MAINTAINER_EMAIL,
+                    author=AUTHOR,
+                    author_email=AUTHOR_EMAIL,
                     description=DESCRIPTION,
                     license=LICENSE,
                     url=URL,
                     version=VERSION,
                     long_description=LONG_DESCRIPTION,
-                    classifiers=['Intended Audience :: Science/Research',
-                                 'Intended Audience :: Developers',
-                                 'Programming Language :: Python',
+                    long_description_content_type="text/markdown",
+                    classifiers=['Programming Language :: Python',
                                  'Topic :: Software Development',
                                  'Topic :: Scientific/Engineering',
                                  'Operating System :: Microsoft :: Windows',
@@ -48,15 +48,15 @@ def setup_package():
                     package_data={'': ['*.pxd']}
                     )
     
-    if len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
-        sys.argv[1] in ('--help-commands', 'egg_info', '--version',
-                        'clean')):
-    # Use setuptools for these commands (they don't work well or at all
-    # with distutils).  For normal builds use distutils.
-    try:
-        from setuptools import setup
-    except ImportError:
-        from distutils.core import setup
+    #if len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or
+    #    sys.argv[1] in ('--help-commands', 'egg_info', '--version',
+    #                    'clean')):
+    ## Use setuptools for these commands (they don't work well or at all
+    ## with distutils).  For normal builds use distutils.
+    #    try:
+    #        from setuptools import setup
+    #    except ImportError:
+    #        from distutils.core import setup
 
     setup(**metadata)
 
