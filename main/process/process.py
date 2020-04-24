@@ -8,11 +8,12 @@ from main.process.input.input import Input
 from main.process.transformations.transformation import Transformations
 from main.process.transformations.functions.transformations import Transformation_List
 from main.process.output.constructor import Constructor
-from process.dfo import DFO
+from main.process.dfo import DFO
 
 import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class Process(object):

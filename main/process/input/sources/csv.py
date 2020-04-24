@@ -1,21 +1,15 @@
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from main.process.input.sources.source import Source
 from main.spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
 
+
+@dataclass_json
 @dataclass
 class Csv(Source):
+    type="Csv"
     csv_path: str=None
     delimiter: str=';'
-
-    @classmethod
-    def get_from_config(cls, config):
-        return cls(
-            type=config['type'],
-            path=config['path'] if 'path' in config.keys() else None,
-            label=config['label'],
-            csv_path = config['csv_path'],
-            delimiter = config['delimiter']
-        )
 
     def apply(self, spark_session):
         input=spark_session.read.option("delimiter", self.delimiter).csv(

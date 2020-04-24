@@ -1,0 +1,7 @@
+
+input:
+  sources:
+    - type: 'Parquet'
+      label: 'events'
+      path: 'heloooo.parquet'
+      parquet_path: 'heloooo.pacucucu'

@@ -1,12 +1,15 @@
-from main.process.input.sources.lake import Lake
 from main.process.input.sources.csv import Csv
 from main.process.input.sources.parquet import Parquet
 
-class Constructor(object):
 
+class Constructor(object):
     @staticmethod
-    def get_from_config(config):
-        type=config['type']
-        if type=='lake':  return Lake.get_from_config(config)
-        if type == 'csv':  return Csv.get_from_config(config)
-        if type == 'parquet':  return Parquet.get_from_config(config)
+    def apply(config):
+        if 'type' in config.keys():
+            type=config['type']
+            if type == 'csv':
+                return Csv().from_dict(config)
+            if type == 'parquet':
+                return Parquet().from_dict(config)
+        else:
+            print("ERROR")

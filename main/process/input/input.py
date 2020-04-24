@@ -3,21 +3,23 @@ from dataclasses import dataclass
 from main.process.transformations.transformation import Transformation
 from typing import List
 import logging
-from process.dfo import DFO
+from dataclasses_json import dataclass_json
+from main.process.dfo import DFO
 from main.process.input.sources.source import Source
 from main.process.input.sources.constructor import Constructor
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+@dataclass_json
 @dataclass
-class Input(object):
+class Input:
     sources: List[Source]
     transformations: List[Transformation] = None
 
     @classmethod
     def get_from_config(cls, config):
-        sources=[Constructor.get_from_config(source)
+        sources=[Constructor.apply(source)
                  for source in config['sources']]
         try:
             trans=[Transformation.get_from_config(trans)

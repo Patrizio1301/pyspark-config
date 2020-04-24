@@ -1,10 +1,7 @@
 from pyspark.sql.dataframe import DataFrame
 from main.spark_utils.dataFrame_extended.functions import DataFrame_Functions
-from spark_utils.table_from_database import Table
+from main.spark_utils.table_from_database import Table
 from typing import List
-
-
-
 
 
 class DataFrame_Extended(DataFrame):

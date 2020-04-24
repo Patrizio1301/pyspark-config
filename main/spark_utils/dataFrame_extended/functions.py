@@ -5,8 +5,6 @@ from pyspark.sql import DataFrame, Window
 from pyspark.sql.types import ArrayType, StringType, IntegerType
 from typing import List
 from pyspark.ml.feature import CountVectorizer
-from gensim.models import FastText
-from gensim.test.utils import common_texts
 
 class DataFrame_Functions(object):
     """
@@ -195,19 +193,6 @@ class DataFrame_Functions(object):
             df['*'],
             F.split(F.col(column), delimiter).alias(newCol)
         )
-
-    @staticmethod
-    def applyFastText(df, spark_session, delimiter, originalCol, column, newCol, size=6, window=1, min_count=4, epoche=300):
-        def func(row):
-            yield row[column]
-        dictionary=df.rdd.flatMap(func).toLocalIterator()
-        model = FastText(size=size, window=window, min_count=min_count)
-        dic=list(dictionary)
-        model.build_vocab(sentences=dic)
-        model.train(sentences=dic, total_examples=len(dic), epochs=epoche)
-        new_df_list=[(delimiter.join(sentence), model.wv[delimiter.join(sentence)].tolist()) for sentence in dic]
-        right=spark_session.createDataFrame(new_df_list, [originalCol, newCol])
-        return df.join(right, originalCol)
 
     @staticmethod
     def add_date(

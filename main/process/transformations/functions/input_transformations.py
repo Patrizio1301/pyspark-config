@@ -1,5 +1,5 @@
 from typing import List
-from process.dfo import DFO
+from main.process.dfo import DFO
 
 class InputReader(object):
     def __init__(self, sources: List[DFO]):

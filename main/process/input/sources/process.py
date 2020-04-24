@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 
 from main.process.input.sources.source import Source
-from process.dfo import DFO
+from main.process.dfo import DFO
 
 @dataclass
 class Process(Source):
