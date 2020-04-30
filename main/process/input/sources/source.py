@@ -3,12 +3,14 @@ from main.process.configuration.config_reader import ConfigReader
 from main.process.configuration.transformation_config_reader import TransformationConfig
 from main.process.transformations.functions.transformations import Transformation_List
 from main.process.transformations.transformation import Transformations
-from dataclasses_json import dataclass_json
+from main.YamlConfig.config import dataclass_json
 from dataclasses_json import DataClassJsonMixin
+from typing import TypeVar, Generic
 
+T = TypeVar('T')
 @dataclass_json
 @dataclass
-class Source(object):
+class Source(Generic[T]):
     type: str =None
     label: str =None
     path: str = None

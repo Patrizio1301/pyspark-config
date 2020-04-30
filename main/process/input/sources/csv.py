@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
+from main.YamlConfig.config import dataclass_json
 from main.process.input.sources.source import Source
 from main.spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
 
 
 @dataclass_json
 @dataclass
-class Csv(Source):
+class Csv(Source['Csv']):
     type="Csv"
     csv_path: str=None
     delimiter: str=';'

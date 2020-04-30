@@ -1,38 +1,24 @@
-from main.process.transformations.functions.input_transformations import DataFrame_Creation, DataFrame_Input_Transformations
 from dataclasses import dataclass
-from main.process.transformations.transformation import Transformation
 from typing import List
 import logging
-from dataclasses_json import dataclass_json
+
+from main.process.transformations.functions.input_transformations import (DataFrame_Creation,
+                                                                          DataFrame_Input_Transformations)
+from main.process.transformations.transformation import Transformation
+from main.YamlConfig.config import dataclass_json
 from main.process.dfo import DFO
 from main.process.input.sources.source import Source
-from main.process.input.sources.constructor import Constructor
+from main.process.input.sources.csv import Csv
+from main.process.input.sources.parquet import Parquet
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 @dataclass_json
 @dataclass
 class Input:
     sources: List[Source]
     transformations: List[Transformation] = None
-
-    @classmethod
-    def get_from_config(cls, config):
-        sources=[Constructor.apply(source)
-                 for source in config['sources']]
-        try:
-            trans=[Transformation.get_from_config(trans)
-                   for trans in config['transformations']]
-        except KeyError:
-            trans= None
-        except Exception as error:
-            raise Exception(error)
-
-        return cls(
-            sources=sources,
-            transformations=trans
-        )
 
     def table_dict(self, spark_session):
         """

@@ -3,9 +3,12 @@ from typing import List
 from main.process.transformations.transformation import Transformation
 from main.spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
 import logging
+from main.YamlConfig.config import dataclass_json
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
+@dataclass_json
 @dataclass
 class Output:
     type: str

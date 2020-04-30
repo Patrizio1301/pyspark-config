@@ -5,3 +5,8 @@ input:
       label: 'events'
       path: 'heloooo.parquet'
       parquet_path: 'heloooo.pacucucu'
+    - type: 'Csv'
+      label: 'events'
+      path: 'heloooo.csv'
+      csv_path: 'heloooo.csucsu'
+      delimiter: "demiliiiiii"

@@ -1,7 +1,10 @@
 from main.spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
 from dataclasses import dataclass
 from typing import List
+from main.YamlConfig.config import dataclass_json
 
+
+@dataclass_json
 @dataclass
 class Transformation:
     type: str
