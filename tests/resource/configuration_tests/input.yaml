@@ -10,3 +10,10 @@ input:
       path: 'heloooo.csv'
       csv_path: 'heloooo.csucsu'
       delimiter: "demiliiiiii"
+  transformations:
+    - type: 'Split'
+      df: 'events'
+      column: 'A'
+      newCol: 'new'
+      delimiter: ','
+

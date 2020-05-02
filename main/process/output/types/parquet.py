@@ -1,33 +1,20 @@
 from dataclasses import dataclass
 from main.process.transformations.transformation import Transformations
 from main.process.transformations.functions.transformations import Transformation_List
-from main.process.transformations.transformation import Transformation
 from main.spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Extended
 import logging
-from main.process.output.output import Output
+from main.process.output.types.output import Output
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 from typing import List
+from main.YamlConfig.config import dataclass_json
 
+
+@dataclass_json
 @dataclass
 class Parquet(Output):
-    partitionCols: List[str]
-
-    @classmethod
-    def get_from_config(cls, config):
-        type = config['type']
-        name = config['name']
-        path = config['path']
-        partitionCols = config['partitionCols']
-        transformations = [Transformation.get_from_config(cfg)
-                           for cfg in config['transformations']]
-        return cls(
-            type=type,
-            name=name,
-            path=path,
-            transformations=transformations,
-            partitionCols=partitionCols
-        )
+    type="Parquet"
+    partitionCols: List[str] =None
 
     def apply(self, df: DataFrame_Extended):
         df=Transformations(

@@ -6,7 +6,7 @@ from main.spark_utils.dataFrame_extended.dataframe_extended import DataFrame_Ext
 
 @dataclass_json
 @dataclass
-class Csv(Source['Csv']):
+class Csv(Source):
     type="Csv"
     csv_path: str=None
     delimiter: str=';'

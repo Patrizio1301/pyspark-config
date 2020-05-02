@@ -1,0 +1,15 @@
+
+
+output:
+  - type: 'Csv'
+    name: "outputi"
+    path: "ksandkjanskda"
+  - type: 'Json'
+    name: "outputi"
+    path: "ksandkjanskda"
+  - type: 'Parquet'
+    name: "outputi"
+    path: "ksandkjanskda"
+    partitionCols: ["hiJN", "ADSAD"]
+
+

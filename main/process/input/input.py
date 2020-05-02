@@ -14,6 +14,7 @@ from main.process.input.sources.parquet import Parquet
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 @dataclass_json
 @dataclass
 class Input:
@@ -46,7 +47,7 @@ class Input:
             else:
                 raise Exception("Multiple sources to choose from. "
                                 "Specify transformations in order "
-                                "to handle all sources or quit sources.")
+                                "to handle all sources or delete sources.")
         else:
             if len(self.transformations)== 1:
                 return self.initial_transformation(

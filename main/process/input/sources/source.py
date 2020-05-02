@@ -4,23 +4,14 @@ from main.process.configuration.transformation_config_reader import Transformati
 from main.process.transformations.functions.transformations import Transformation_List
 from main.process.transformations.transformation import Transformations
 from main.YamlConfig.config import dataclass_json
-from dataclasses_json import DataClassJsonMixin
-from typing import TypeVar, Generic
 
-T = TypeVar('T')
+
 @dataclass_json
 @dataclass
-class Source(Generic[T]):
+class Source:
     type: str =None
     label: str =None
     path: str = None
-
-    def __new__(cls, type, label, path, *args, **kwargs):
-        subclass_map = {subclass.type: subclass for subclass in cls.__subclasses__()}
-        subclass = subclass_map[type]
-        instance = object.__new__(subclass)
-        print(instance.__class__)
-        return instance
 
     def apply(self, spark_session):
         pass

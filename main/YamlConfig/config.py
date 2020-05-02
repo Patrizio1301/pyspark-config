@@ -22,10 +22,11 @@ from dataclasses_json.core import (_user_overrides_or_exts, get_type_hints,
                                    _is_supported_generic,
                                    _support_extended_types,
                                    _decode_dict_keys, _ExtendedEncoder,
-                                   _decode_generic)
+                                   _decode_generic,
+                                   _decode_items)
+
 from dataclasses_json.api import A
 from dataclasses import (MISSING,
-                         _is_dataclass_instance,
                          fields,
                          is_dataclass  # type: ignore
                          )
@@ -197,7 +198,7 @@ def _decode_dataclass(cls, kvs, infer_missing):
         from typing import GenericMeta
         field_value = kvs[field.name]
         field_type = types[field.name]
-        if _is_supported_generic(field_type) and field_type != str:
+        if _is_supported_generic(field_type) and field_type.__args__[0]!=str:
             type_param = 'type' in [f.name for f in fields(field_type.__args__[0])]
         elif 'type' in field_names:
             type_param = True
@@ -215,7 +216,7 @@ def _decode_dataclass(cls, kvs, infer_missing):
                     f"Set infer_missing=False (the default) to prevent this "
                     f"behavior.", RuntimeWarning)
             else:
-                warnings.warn(f"`NoneType` object {warning}.", RuntimeWarning)
+                pass
             init_kwargs[field.name] = field_value
             continue
 
@@ -276,7 +277,7 @@ def _decode_generic_subsets(type_, value, infer_missing):
             vs = _decode_items(v_type, value.values(), infer_missing)
             xs = zip(ks, vs)
         else:
-            xs = (_decode_dataclass(getFields(type_,v), v, infer_missing) for v in value)
+            xs = (_decode_dataclass(getSubclass(type_,v), v, infer_missing) for v in value)
 
         # get the constructor if using corresponding generic type in `typing`
         # otherwise fallback on constructing using type_ itself
@@ -300,29 +301,19 @@ def _decode_generic_subsets(type_, value, infer_missing):
             res = value
     return res
 
-def getFields(cls, values):
-    subclass_map = {subclass.type: subclass for subclass in cls.__subclasses__()}
-    subclass = subclass_map[values['type']]
-    return fields(subclass)
-
-def _decode_items(type_arg, xs, infer_missing):
+def getSubclass(cls, values):
     """
-    This is a tricky situation where we need to check both the annotated
-    type info (which is usually a type from `typing`) and check the
-    value's type directly using `type()`.
-
-    If the type_arg is a generic we can use the annotated type, but if the
-    type_arg is a typevar we need to extract the reified type information
-    hence the check of `is_dataclass(vs)`
+    In case one of the fields is called type, the corresponding
+    subclass is searched for.
     """
-    if is_dataclass(type_arg) or is_dataclass(xs):
-        items = (_decode_dataclass(type_arg, x, infer_missing)
-                 for x in xs)
-    elif _is_supported_generic(type_arg):
-        items = (_decode_generic(type_arg, x, infer_missing) for x in xs)
-    else:
-        items = xs
-    return items
+    try:
+        subclass_map = {subclass.type: subclass for subclass in cls.__args__[0].__subclasses__()}
+    except:
+        raise
+    try:
+        return subclass_map[values['type']]
+    except KeyError:
+        raise Exception("Type "+values['type']+" not available.")
 
 @dataclass
 class YamlDataClassConfig(DataClassJsonMix, metaclass=ABCMeta):
