@@ -29,13 +29,30 @@ $ pip install pyspark_config
 
 ### Example
 
-A step by step series of examples that tell you how to get a development env running
+Given the yaml configuration file '../example.yaml': 
 
-Say what the step will be
+```yaml
+input:
+  sources:
+    - type: 'Parquet'
+      label: 'parquet'
+      parquet_path: '../table.parquet'
 
-```shell
-$ python
+transformations:
+  - type: "Select"
+    cols: ['A', 'B']
+  - type: "Concatenate"
+    cols: ['A', 'B']
+    name: 'Concatenation_AB'
+    delimiter: "-"
+
+output:
+  - type: 'Parquet'
+    name: "example"
+    path: "../outputs"
 ```
+
+Given the input source 'table.parquet', the following code can then be applied: 
 
 ```python
 from pyspark_config import Config
@@ -45,20 +62,15 @@ from pyspark_config.transformations.transformations import *
 from pyspark_config.output import *
 from pyspark_config.input import *
 
-config_path="/example.yaml"
+config_path="../example.yaml"
 configuration=Config()
 configuration.load(Path(config_path))
 
 configuration.apply()
 ```
 
-And repeat
+The output will then be saved in '../output/example.parquet'.
 
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ### Changelog
 
