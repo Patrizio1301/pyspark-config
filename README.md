@@ -1,7 +1,7 @@
 # Pyspark-config
 
-[![Python](https://img.shields.io/pypi/pyversions/tensorflow.svg?style=plastic)](https://pypi.org/project/pyspark-config/)
-[![PyPI](https://badge.fury.io/py/tensorflow.svg)](https://pypi.org/project/pyspark-config/)
+[![Python](https://img.shields.io/pypi/pyversions/pyspark_config.svg?style=plastic)](https://pypi.org/project/pyspark-config/)
+[![PyPI](https://badge.fury.io/py/pyspark-config.svg)](https://pypi.org/project/pyspark-config/)
 
 Pyspark-Config is a Python module for pyspark use with the help of a configuration file, granting access to build distributed data piplines with configurable input and output. 
 
