@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
-Tue May 05 17:51:48 CEST 2020:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0171-e589-3b95-00001014c8f8 
-on database directory /home/patrizio/PycharmProjects/pyspark-config/tests/python/configuration/metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@63b9fc62 
+Tue May 05 19:27:57 CEST 2020:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0171-e5e1-419f-000015c1cbe8 
+on database directory /home/patrizio/PycharmProjects/pyspark-config/tests/python/configuration/metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@391021ea 
 Loaded from file:/home/patrizio/PycharmProjects/pyspark-config/venv/lib/python3.6/site-packages/pyspark/jars/derby-10.12.1.1.jar
 java.vendor=Private Build
 java.runtime.version=1.8.0_242-8u242-b08-0ubuntu3~16.04-b08
