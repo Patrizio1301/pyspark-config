@@ -52,7 +52,7 @@ output:
     path: "../outputs"
 ```
 
-Given the input source 'table.parquet', the following code can then be applied: 
+With the input source saved in '../table.parquet', the following code can then be applied: 
 
 ```python
 from pyspark_config import Config
@@ -69,7 +69,7 @@ configuration.load(Path(config_path))
 configuration.apply()
 ```
 
-The output will then be saved in '../output/example.parquet'.
+The output will then be saved in '../outputs/example.parquet'.
 
 
 ### Changelog
