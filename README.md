@@ -1,5 +1,8 @@
 # Pyspark-config
 
+[![Python](https://img.shields.io/pypi/pyversions/tensorflow.svg?style=plastic)](https://pypi.org/project/pyspark-config/)
+[![PyPI](https://badge.fury.io/py/tensorflow.svg)](https://pypi.org/project/pyspark-config/)
+
 Pyspark-Config is a Python module for pyspark use with the help of a configuration file, granting access to build distributed data piplines with configurable input and output. 
 
 
@@ -9,23 +12,44 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installation
 
+To install the current release *(Ubuntu and Windows)*:
+
+```
+$ pip install pyspark_config
+```
+
 #### Dependencies
 
 <ul>
   <li>Python (>= 3.6)</li>
   <li>Pyspark (>= 2.4.5)</li>
   <li>PyYaml (>= 5.3.1)</li>
-  <li>Dataclass (>= 0.0.0)</li>
+  <li>Dataclasses (>= 0.0.0)</li>
 </ul>
 
-### User installation
+### Example
 
 A step by step series of examples that tell you how to get a development env running
 
 Say what the step will be
 
+```shell
+$ python
 ```
-Give the example
+
+```python
+from pyspark_config import Config
+from pathlib import Path
+
+from pyspark_config.transformations.transformations import *
+from pyspark_config.output import *
+from pyspark_config.input import *
+
+config_path="/example.yaml"
+configuration=Config()
+configuration.load(Path(config_path))
+
+configuration.apply()
 ```
 
 And repeat
@@ -38,51 +62,7 @@ End with an example of getting some data out of the system or using it for a lit
 
 ### Changelog
 
-See the changelog for a history of notable changes to scikit-learn.
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Patrizio Guagliardo** - [Patrizio1301](https://github.com/Patrizio1301)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See the changelog for a history of notable changes to pyspark-config.
 
 ## License
 

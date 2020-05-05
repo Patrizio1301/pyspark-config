@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: pyspark-config
-Version: 0.0.1
+Version: 0.0.2.5
 Summary: Configurable data pipeline with Pyspark
 Home-page: https://github.com/pypa/pyspark-config
 Author: Patrizio Guagliardo

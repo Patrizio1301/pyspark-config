@@ -1,0 +1,30 @@
+input:
+  sources:
+    - type: 'Parquet'
+      label: 'parquet'
+      parquet_path: '/home/patrizio/PycharmProjects/pyspark-config/tests/resource/output_path/test_parquet.parquet'
+    - type: 'Csv'
+      label: 'csv'
+      csv_path: '/home/patrizio/PycharmProjects/pyspark-config/tests/resource/output_path/test_csv.csv'
+      delimiter: ","
+  creations:
+    - type: "Join"
+      left: "parquet"
+      right: "csv"
+      left_on: ["A"]
+      right_on: ["D"]
+      how: "left"
+
+transformations:
+  - type: "Select"
+    cols: ['B', 'E']
+  - type: "Concatenate"
+    cols: ['B', 'E']
+    name: 'BE'
+    delimiter: "&"
+
+output:
+  - type: 'Parquet'
+    name: "output_parquet_concat"
+    path: "/home/patrizio/PycharmProjects/pyspark-config/tests/resource/output_path"
+

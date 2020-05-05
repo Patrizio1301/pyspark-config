@@ -1,0 +1,9 @@
+
+
+transformation:
+  - type: 'Select'
+    sql_condition: "sql_condition"
+  - type: 'Filter'
+    cols: ["A", "B", "C"]
+
+

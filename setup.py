@@ -1,5 +1,6 @@
 from setuptools import setup
 import sys
+import urllib3
 
 DISTNAME = 'pyspark-config'
 DESCRIPTION = 'Configurable data pipeline with Pyspark'
@@ -9,11 +10,11 @@ AUTHOR = 'Patrizio Guagliardo'
 AUTHOR_EMAIL = 'patrizio.guagliardo@gmx.de'
 LICENSE = 'new BSD'
 URL = 'https://github.com/pypa/pyspark-config'
-VERSION = '0.0.1'
+VERSION = '0.0.2.5'
 
 PYSPARK_MIN_VERSION = '2.4.5'
 PYYAML_MIN_VERSION = '5.3.1'
-DATACLASS_MIN_VERSION = '0.0'
+DATACLASSES_MIN_VERSION = '0.0'
 
 def setup_package():
     metadata = dict(name=DISTNAME,
@@ -25,6 +26,20 @@ def setup_package():
                     version=VERSION,
                     long_description=LONG_DESCRIPTION,
                     long_description_content_type="text/markdown",
+                    packages=["pyspark_config",
+                              "pyspark_config.input",
+                              "pyspark_config.transformations",
+                              "pyspark_config.output",
+                              "pyspark_config.yamlConfig",
+                              "pyspark_config.spark_utils"
+                              ],
+                    package_dir ={
+                        "pyspark_config.input": 'pyspark_config/input',
+                        "pyspark_config.transformations": 'pyspark_config/transformations',
+                        "pyspark_config.output": 'pyspark_config/output',
+                        "pyspark_config.yamlConfig": 'pyspark_config/yamlConfig',
+                        "pyspark_config.spark_utils": 'pyspark_config/spark_utils'
+                    },
                     classifiers=['Programming Language :: Python',
                                  'Topic :: Software Development',
                                  'Topic :: Scientific/Engineering',
@@ -43,7 +58,7 @@ def setup_package():
                     install_requires=[
                         'pyspark>={}'.format(PYSPARK_MIN_VERSION),
                         'PyYAML>={}'.format(PYYAML_MIN_VERSION),
-                        'dataclass>={}'.format(DATACLASS_MIN_VERSION)
+                        'dataclasses>={}'.format(DATACLASSES_MIN_VERSION)
                     ],
                     package_data={'': ['*.pxd']}
                     )

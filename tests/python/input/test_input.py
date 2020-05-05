@@ -1,10 +1,25 @@
-from main.process.input.sources.source import Source
+import unittest
+from pyspark_config import Config
+from pathlib import Path
+from pyspark_config.input import Csv
+from pyspark_config.input import Parquet
 
-def test_sum():
-    assert sum([1, 2, 3]) == 6
+from pyspark_config.input.creator import Join
 
-def test_source():
-    print(Source.get_from_config())
-    True
+from pyspark_config.transformations import *
+from pyspark_config.output import Parquet
+
+
+
+class inputTestCase(unittest.TestCase):
+
+    def test_multiple(self):
+        conf = Config()
+        conf.load(Path('/home/patrizio/PycharmProjects/pyspark-config/tests/resource/configuration_tests/input_test.yaml'))
+        conf.input.table_dict(conf.spark_session)
+        conf.input.get_input(conf.spark_session)
+        conf.apply()
+        print(conf)
+
 
 

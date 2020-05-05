@@ -1,0 +1,20 @@
+input:
+    sources:
+      - type: 'Csv'
+        csv_path: '/home/patrizio/Descargas/data/events.csv'
+        name: 'events'
+        label: 'events'
+        delimiter: ','
+
+transformations:
+    - type: "Select"
+      cols: ['timestamp', 'event']
+
+
+output:
+  -   type: 'Csv'
+      name: "test_project"
+      path: "/home/patrizio/PycharmProjects/pyspark-config/tests/resource/output_path"
+      transformations:
+        - type: "SortBy"
+          column: "timestamp"
