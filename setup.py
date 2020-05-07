@@ -9,7 +9,7 @@ with open('README.md') as f:
 AUTHOR = 'Patrizio Guagliardo'
 AUTHOR_EMAIL = 'patrizio.guagliardo@gmx.de'
 LICENSE = 'new BSD'
-URL = 'https://github.com/pypa/pyspark-config'
+URL = 'https://github.com/Patrizio1301/pyspark-config'
 VERSION = '0.0.2.5'
 
 PYSPARK_MIN_VERSION = '2.4.5'
