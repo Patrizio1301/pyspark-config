@@ -3,12 +3,12 @@
 [![Python](https://img.shields.io/pypi/pyversions/pyspark_config.svg?style=plastic)](https://pypi.org/project/pyspark-config/)
 [![PyPI](https://badge.fury.io/py/pyspark-config.svg)](https://pypi.org/project/pyspark-config/)
 
-Pyspark-Config is a Python module for pyspark use with the help of a configuration file, granting access to build distributed data piplines with configurable input and output. 
+Pyspark-Config is a Python module for data processing in Pyspark by means of a configuration file, granting access to build distributed data piplines with configurable inputs, transformations and outputs. 
 
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Installation
 
