@@ -1,2 +1,5 @@
 /venv/
 .idea/
+/dist/
+/build/
+/pyspark_config.egg-info/

@@ -1,12 +1,18 @@
+""" Configuration class of Pyspark-Config"""
+
+import tempfile
+import os
+
 from dataclasses import dataclass
 from typing import List
+from pyspark import SparkConf
+from pyspark.sql import SparkSession
+
 from pyspark_config.input.input import Input
-from pyspark_config.transformations.transformations import Transformation
+from pyspark_config.transformations import Transformation
 from pyspark_config.output.output import Output
 from pyspark_config.yamlConfig.config import YamlDataClassConfig
-from pyspark.sql import SparkSession
 from pyspark_config.spark_utils.dataframe_extended import DataFrame_Extended
-
 
 @dataclass
 class Config(YamlDataClassConfig):
@@ -16,10 +22,12 @@ class Config(YamlDataClassConfig):
 
     @property
     def spark_session(self):
+        conf= SparkConf().setAppName("test") \
+            .setMaster('local') \
+            .set('spark.driver.extraJavaOptions', '-Dderby.system.home=/tmp/derby')
         return SparkSession.builder\
-            .master("local") \
-            .appName("Word Count") \
             .enableHiveSupport() \
+            .config(conf=conf) \
             .getOrCreate()
 
     def __apply_input__(self):
@@ -72,6 +80,7 @@ class Config(YamlDataClassConfig):
         of the performed transformations.
 
         """
+
         df = DataFrame_Extended(self.__apply_input__(), self.spark_session)
         df_transformed = self.__apply_transformations__(df)
         self.__get_outputs__(df_transformed)

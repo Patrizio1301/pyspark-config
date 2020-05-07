@@ -15,6 +15,8 @@ VERSION = '0.0.2.5'
 PYSPARK_MIN_VERSION = '2.4.5'
 PYYAML_MIN_VERSION = '5.3.1'
 DATACLASSES_MIN_VERSION = '0.0'
+DATACLASSES_JSON_MIN_VERSION = '0.4.2'
+MARSHMALLOW_MIN_VESION = '3.5.2'
 
 def setup_package():
     metadata = dict(name=DISTNAME,
@@ -58,7 +60,9 @@ def setup_package():
                     install_requires=[
                         'pyspark>={}'.format(PYSPARK_MIN_VERSION),
                         'PyYAML>={}'.format(PYYAML_MIN_VERSION),
-                        'dataclasses>={}'.format(DATACLASSES_MIN_VERSION)
+                        'dataclasses>={}'.format(DATACLASSES_MIN_VERSION),
+                        'dataclasses-json>={}'.format(DATACLASSES_JSON_MIN_VERSION),
+                        'marshmallow>={}'.format(MARSHMALLOW_MIN_VESION),
                     ],
                     package_data={'': ['*.pxd']}
                     )

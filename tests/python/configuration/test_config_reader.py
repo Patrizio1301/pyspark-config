@@ -1,14 +1,14 @@
 from pathlib import Path
 import unittest
-from pyspark_config.process.config import Config
-from pyspark_config.process.input.input import Input
-from pyspark_config.process.transformations.transformations import *
-from pyspark_config.process.output.types.json import Json
-from pyspark_config.process.output.types.parquet import Parquet as Parquet_Output
-from pyspark_config.process.output.types.csv import Csv as Csv_output
+from pyspark_config.config import Config
+from pyspark_config.input.input import Input
+from pyspark_config.transformations.transformations import *
+from pyspark_config.output import Json
+from pyspark_config.output import Parquet as Parquet_Output
+from pyspark_config.output import Csv as Csv_output
 
-from pyspark_config.input.sources import Csv
-from pyspark_config.input.sources import Parquet
+from pyspark_config.input import Csv
+from pyspark_config.input import Parquet
 
 
 
@@ -83,15 +83,14 @@ class testConfigurableTestCase(unittest.TestCase):
         expected=Config(
             input=None,
             output=None,
-            transformation=
-            [
+            transformations=[
                 Select(
                     type='Select',
-                    sql_condition='sql_condition'
+                    cols='sql_condition'
                 ),
                 Filter(
                     type='Filter',
-                    cols=['A', 'B', 'C']
+                    sql_condition=['A', 'B', 'C']
                 )
             ]
         )

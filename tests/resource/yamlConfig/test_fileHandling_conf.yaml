@@ -1,0 +1,11 @@
+
+input:
+  sources:
+    - type: 'Csv'
+      label: 'events'
+      path: 'heloooo.csv'
+      csv_path: 'zdfsdf'
+
+transformations:
+
+output:

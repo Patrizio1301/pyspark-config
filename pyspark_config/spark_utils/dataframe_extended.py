@@ -41,13 +41,22 @@ class DataFrame_Extended(DataFrame):
         return DataFrame_Extended(df=df, spark_session=self.spark_session)
 
     def filter(self, sql_condition):
-        """
-        Filters rows using the given condition.
+        """Filters rows using the given condition.
 
         :func:`where` is an alias for :func:`filter`.
 
-        :param condition: a :class:`Column` of :class:`sources.BooleanType`
+        :param condition: a :class:`Column` of :class:`types.BooleanType`
             or a string of SQL expression.
+
+        df.filter(df.age > 3).collect()
+        [Row(age=5, name=u'Bob')]
+        df.where(df.age == 2).collect()
+        [Row(age=2, name=u'Alice')]
+
+        df.filter("age > 3").collect()
+        [Row(age=5, name=u'Bob')]
+        df.where("age = 2").collect()
+        [Row(age=2, name=u'Alice')]
         """
         df = DataFrame_Functions.filter(df=self.df, sql_condition=sql_condition)
         return DataFrame_Extended(df=df, spark_session=self.spark_session)

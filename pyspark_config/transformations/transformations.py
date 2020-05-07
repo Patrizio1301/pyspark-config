@@ -1,7 +1,10 @@
-from typing import List
+"""Transformation types for PySpark-config configuration file."""
+
+from typing import List, Any, Callable
 from dataclasses import dataclass
 import pyspark.sql.functions as F
 from pyspark.sql.types import StringType
+from pyspark.sql import DataFrame, Window
 
 from pyspark_config.yamlConfig.config import dataclass_json
 
@@ -9,14 +12,353 @@ from pyspark_config.yamlConfig.config import dataclass_json
 @dataclass_json
 @dataclass
 class Transformation:
+    """Transformation
+
+    """
     type: str = None
 
     def transform(self, df):
-        pass
+        raise NotImplementedError("Each transformation must have a transform method.")
+
+
+@dataclass_json
+@dataclass
+class Cast(Transformation):
+    """
+    Casts column DataType.
+
+    Args:
+    ------
+    col: String. Column considered to cast.
+    castedCol: String. Column name of the casted column.
+    fromType: String. DataType of 'col'.
+    toType: String. DataType of 'castedCol'.
+
+    --- Example: ----
+    Cast('age', 'ages', 'int', 'string').transform(df).collect()
+    [Row(age=2), Row(ages=u'2')]
+
+    """
+    type = "Cast"
+    col: str = None
+    castedCol: str = None
+    fromType: str = None
+    toType: str = None
+
+    def transform(self, df) -> DataFrame:
+        # TODO ALL TYPES MUST BE CONSIDERED
+        casted_column = df[self.col].cast(self.toType)
+        return df.withColumn(self.castedCol, casted_column)
+
+
+@dataclass_json
+@dataclass
+class CollectList(Transformation):
+    """
+    Generates list inside columns.
+
+    Args:
+    ------
+    orderBy: List[String].
+    groupByList: List[String].
+    columnList: List[String].
+
+    --- Example: ----
+    CollectList(['country'], ['country'], ['city']).transform(df).show()
+        +-------------+--------------------------+
+        |country      |city_list                 |
+        +-------------+--------------------------+
+        |Germany      |[Aachen, Berlin, Hamburg ]|
+        |Spain        |[Bilbao, Madrid, Seville] |
+        |United States|[New York, Washington]    |
+        +-------------+--------------------------+
+
+    """
+    type = "CollectList"
+    orderBy: List[str] = None
+    groupByList: List[str] = None
+    columnList: List[str] = None
+
+    def transform(self, df) -> DataFrame:
+        w = Window.partitionBy(self.groupByList)\
+            .orderBy(self.orderBy)
+
+        def columnwise(df, column):
+            new_column_name = '{}_list'.format(column)
+            return df.withColumn(
+                new_column_name,
+                F.collect_list(df[column]).over(w)
+            )
+
+        def columnwise_(column):
+            new_column_name = '{}_list'.format(column)
+            return F.max(new_column_name).alias(new_column_name)
+
+        column_list_ = [columnwise_(column) for column in self.columnList]
+        for column in self.columnList:
+            df = columnwise(df, column)
+        return df.groupby(self.groupByList).agg(*column_list_)
+
+
+@dataclass_json
+@dataclass
+class Concatenate(Transformation):
+    """
+    Creates a column concatenating the indicated columns
+    with a delimiter (Default: ""). Number of columns to
+    concatenate is undetermined.
+
+    Args:
+    ------
+    cols: List[String]. Columns to concatenate. Column type must be a string.
+    name: String. Column name of the concatenated column.
+    delimiter: String. Specifies the boundary between separate columns in
+        the concatenated sequence.
+
+    --- Example: ----
+    Concatenate(['name', 'surname'], 'concat', '-').transform(df).collect()
+    [Row(name= u'Max', name=u'Muster', concat='uMax-Muster')]
+    Concatenate(['name', 'surname'], 'concat').transform(df).collect()
+    [Row(name= 'uMax', name=u'Muster', concat=u'MaxMuster')]
+    """
+    type = "Concatenate"
+    cols: List[str] = None
+    name: str = None
+    delimiter: str = ""
+
+    def transform(self, df) -> DataFrame:
+        func: Callable[[Any], str] = lambda cols: \
+            self.delimiter.join([x if x is not None else "" for x in cols])
+        concat_udf = F.udf(func, StringType())
+        return df.withColumn(self.name, concat_udf(F.array(*self.cols)))
+
+
+@dataclass_json
+@dataclass
+class DayOfMonth(Transformation):
+    """
+    Extract the day of month of a given date as integer.
+
+    Args:
+    ------
+    date: String. Column with DateType where month to extract from.
+    colName: String. Column name of day of month content.
+
+    df = spark.createDataFrame([('2015-04-08',)], ['dt'])
+    DayOfMonth('dt', 'dayOfMonth').transform(df).collect()
+    [Row(dt='2015-04-08', dayOfMonth=7)]
+    """
+    type = "Month"
+    date: str = None
+    colName: str = None
+
+    def transform(self, df) -> DataFrame:
+        return df.withColumn(colName=self.colName, col=(F.dayofmonth(self.date)-1))
+
+
+@dataclass_json
+@dataclass
+class DayOfYear(Transformation):
+    """
+    Extract the day of year of a given date as integer.
+
+    Args:
+    ------
+    date: String. Column with DateType where month to extract from.
+    colName: String. Column name of day of year content.
+
+    df = spark.createDataFrame([('2015-04-08',)], ['dt'])
+    DayOfYear('dt', 'dayOfYear').transform(df).collect()
+    [Row(dt='2015-04-08', dayOfYear=97)]
+    """
+    type = "DayOfYear"
+    date: str = None
+    colName: str = None
+
+    def transform(self, df) -> DataFrame:
+        return df.withColumn(colName=self.colName, col=(F.dayofyear(self.date)-1))
+
+
+@dataclass_json
+@dataclass
+class DayOfWeek(Transformation):
+    """
+    Extract the day of week of a given date as integer.
+
+    Args:
+    ------
+    date: String. Column with DateType where day of week to extract from.
+    colName: String. Column name of day of week content.
+
+    df = spark.createDataFrame([('2015-04-08',)], ['dt'])
+    DayOfWeek('dt', 'dayOfWeek').transform(df).collect()
+    [Row(dt='2015-04-08', dayOfWeek=3)]
+    """
+    type = "DayOfWeek"
+    date: str = None
+    colName: str = None
+
+    def transform(self, df) -> DataFrame:
+        return df.withColumn(colName=self.colName, col=(F.dayofweek(self.date)-1))
+
+
+
+@dataclass_json
+@dataclass
+class Filter(Transformation):
+    """Filters rows using the given condition.
+
+    :func:`where` is an alias for :func:`filter`.
+
+    Args:
+    ------
+    condition: String. A string of SQL expression.
+
+    --- Example: ----
+    Filter('age > 3').transform(df).collect()
+    [Row(age=5, name=u'Bob')]
+    Filter('age == 2').transform(df).collect()
+    [Row(age=2, name=u'Alice')]
+    """
+    type = "Filter"
+    sql_condition: str = None
+
+    def transform(self, df) -> DataFrame:
+        return df.filter(self.sql_condition)
+
+
+@dataclass_json
+@dataclass
+class FilterByList(Transformation):
+    """Filters column by a list of values.
+
+    :func:`where` is an alias for :func:`filter`.
+
+    Args:
+    ------
+    col: String. Column considered in filter.
+    values: List[String]. Values which should remain
+        in the given column 'col'.
+
+    --- Example: ----
+    FilterByList('name', ['Bob', 'Max']).transform(df).collect()
+    [Row(name=u'Bob'), Row(name=u'Max')]
+    FilterByList('name', ['Bob']).transform(df).collect()
+    [Row(name=u'Bob')]
+
+    """
+    type = "FilterByList"
+    col: str = None
+    values: List[str] = None
+
+    def transform(self, df) -> DataFrame:
+        return df.where((F.col(self.col).isin(self.choice_list)))
+
+
+@dataclass_json
+@dataclass
+class ListLength(Transformation):
+    type = "ListLength"
+    col: str = None
+    colName: str = None
+
+    def transform(self, df) -> DataFrame:
+        return df.withColumn(
+            colName=self.colName,
+            col=F.size(self.col)
+        )
+
+
+@dataclass_json
+@dataclass
+class Month(Transformation):
+    """
+    Extract the month of a given date as integer.
+
+    Args:
+    ------
+    date: String. Column with DateType where month to extract from.
+    colName: String. Column name of month content.
+
+    df = spark.createDataFrame([('2015-04-08',)], ['dt'])
+    Year('dt', 'month').transform(df).collect()
+    [Row(dt='2015-04-08', month=3)]
+    """
+    type = "Month"
+    date: str = None
+    colName: str = None
+
+    def transform(self, df) -> DataFrame:
+        return df.withColumn(colName=self.colName, col=(F.month(self.date)-1))
+
+
+@dataclass_json
+@dataclass
+class Percentage(Transformation):
+    """
+    Creates a column called 'percentage' with the percentage
+    of the value in the column column.
+
+    Args:
+    ------
+    col: String. Numerical Column which the percentage is calculated for
+    colName: String.
+
+    --- Example: ----
+
+    """
+    type = "Percentage"
+    col: str = None
+    colName: str = None
+
+    def transform(self, df):
+        from pyspark.sql.window import Window
+        import pyspark.sql.functions as f
+        return df.withColumn(
+            colName=self.colName,
+            col=df[self.col] / f.sum(f.col(self.col)).over(Window.partitionBy())
+        )
+
+
+@dataclass_json
+@dataclass
+class Year(Transformation):
+    """
+    Extract the year of a given date as integer.
+
+    Args:
+    ------
+    date: String. Column with DateType where year to extract from.
+    colName: String. Column name of year content.
+
+    df = spark.createDataFrame([('2015-04-08',)], ['dt'])
+    Year('dt', 'year').transform(df).collect()
+    [Row(dt='2015-04-08', year=2015)]
+    """
+    type = "Year"
+    date: str = None
+    colName: str = None
+
+    def transform(self, df) -> DataFrame:
+        return df.withColumn(colName=self.colName, col=F.year(self.date))
+
 
 @dataclass_json
 @dataclass
 class Select(Transformation):
+    """Projects a set of expressions and returns a new :class:`DataFrame`.
+
+    :param cols: list of column names (string) or expressions (:class:`Column`).
+        If one of the column names is '*', that column is expanded to include all columns
+        in the current :class:`DataFrame`.
+
+    df.select('*').collect()
+    [Row(age=2, name=u'Alice'), Row(age=5, name=u'Bob')]
+    df.select('name', 'age').collect()
+    [Row(name=u'Alice', age=2), Row(name=u'Bob', age=5)]
+    df.select(df.name, (df.age + 10).alias('age')).collect()
+    [Row(name=u'Alice', age=12), Row(name=u'Bob', age=15)]
+    """
     type = "Select"
     cols: List[str] = None
 
@@ -26,61 +368,28 @@ class Select(Transformation):
 
 @dataclass_json
 @dataclass
-class Filter(Transformation):
-    type = "Filter"
-    sql_condition: str = None
-
-    def transform(self, df):
-        return df.filter(self.sql_condition)
-
-
-@dataclass_json
-@dataclass
-class FilterByList(Transformation):
-    type = "FilterByList"
-    col: str = None
-    choice_list:List[str] = None
-
-    def transform(self, df):
-        return df.filter_by_list(
-            col=self.col,
-            choice_list=self.choice_list
-        )
-
-
-@dataclass_json
-@dataclass
-class Cast(Transformation):
-    type = "Cast"
-    col: str = None
-    newCol: str = None
-    fromType: str = None
-    toType: str = None
-
-    def transform(self, df):
-        return df.cast(
-            col=self.col,
-            newCol=self.newCol,
-            fromType=self.fromType,
-            toType=self.toType)
-
-
-@dataclass_json
-@dataclass
-class Normalization(Transformation):
-    type = "Normalization"
-    col: str = None
-    newCol: str = None
-
-    def transform(self, df):
-        return df.normalization(
-            col=self.col,
-            newCol=self.newCol)
-
-
-@dataclass_json
-@dataclass
 class SortBy(Transformation):
+    """Returns a new :class:`DataFrame` sorted by the specified column(s).
+
+    :param cols: list of :class:`Column` or column names to sort by.
+    :param ascending: boolean or list of boolean (default ``True``).
+        Sort ascending vs. descending. Specify list for multiple sort orders.
+        If a list is specified, length of the list must equal length of the `cols`.
+
+    df.sort(df.age.desc()).collect()
+    [Row(age=5, name=u'Bob'), Row(age=2, name=u'Alice')]
+    df.sort("age", ascending=False).collect()
+    [Row(age=5, name=u'Bob'), Row(age=2, name=u'Alice')]
+    df.orderBy(df.age.desc()).collect()
+    [Row(age=5, name=u'Bob'), Row(age=2, name=u'Alice')]
+    from pyspark.sql.functions import *
+    df.sort(asc("age")).collect()
+    [Row(age=2, name=u'Alice'), Row(age=5, name=u'Bob')]
+    df.orderBy(desc("age"), "name").collect()
+    [Row(age=5, name=u'Bob'), Row(age=2, name=u'Alice')]
+    df.orderBy(["age", "name"], ascending=[0, 1]).collect()
+    [Row(age=5, name=u'Bob'), Row(age=2, name=u'Alice')]
+    """
     type = "SortBy"
     column: str = None
     ascending: bool = False
@@ -93,108 +402,25 @@ class SortBy(Transformation):
 
 @dataclass_json
 @dataclass
-class GroupBy(Transformation):
-    type = "GroupBy"
-    groupBy_col_list: List[str] = None
-    sum_col_list: List[str] = None
-    count_col_list:List[str]= None
-
-    def transform(self, df):
-        return df.groupby(
-            groupBy_col_list=self.groupBy_col_list,
-            sum_col_list=self.sum_col_list,
-            count_col_list=self.count_col_list
-        )
-
-
-@dataclass_json
-@dataclass
-class Concatenate(Transformation):
-    """
-    Creates a column contatinating the indicated columns with a delimiter (Default: "").
-
-    :param cols: List[String]
-        Columns to concatenate. Column type must be a string
-    :param name: String
-        Column name of the concatenated column
-    :param delimiter: String
-        Specifies the boundary between separate columns in the concatenated sequence
-
-    """
-    type = "Concatenate"
-    cols: List[str] = None
-    name: str = None
-    delimiter: str = ""
-
-    def transform(self, df):
-        func = lambda cols: self.delimiter.join([x if x is not None else "" for x in cols])
-        concat_udf = F.udf(func, StringType())
-        return df.withColumn(self.name, concat_udf(F.array(*self.cols)))
-
-
-@dataclass_json
-@dataclass
 class Split(Transformation):
+    """
+    Splits str around pattern (pattern is a regular expression).
+
+    .. note:: pattern is a string represent the regular expression.
+
+    df = spark.createDataFrame([('ab12cd',)], ['s',])
+    df.select(split(df.s, '[0-9]+').alias('s')).collect()
+    [Row(s=[u'ab', u'cd'])]
+    """
     type = "Split"
     column: str = None
     newCol: str = None
     delimiter: str = None
 
     def transform(self, df):
-        return df.split(
-            column=self.column,
-            newCol=self.newCol,
-            delimiter=self.delimiter)
-
-
-@dataclass_json
-@dataclass
-class AddPerc(Transformation):
-    type = "AddPerc"
-    column: str = None
-    perc_name: str = "perc"
-
-    def transform(self, df):
-        return df.add_perc(
-            column=self.column,
-            perc_name=self.perc_name)
-
-
-@dataclass_json
-@dataclass
-class AddDate(Transformation):
-    type = "AddDate"
-    date: str = None
-
-    def transform(self, df):
-        return df.add_date(self.date)
-
-
-@dataclass_json
-@dataclass
-class CollectList(Transformation):
-    type = "CollectList"
-    order_by: List[str] = None
-    group_by_list: List[str] = None
-    column_list: List[str] = None
-
-    def transform(self, df):
-        return df.collect_list(
-            order_by=self.order_by,
-            group_by_list=self.group_by_list,
-            column_list=self.column_list
-        )
-
-
-@dataclass_json
-@dataclass
-class ListLength(Transformation):
-    type = "ListLength"
-    column: str = None
-
-    def transform(self, df):
-        return df.list_length(
-            column=self.column
+        return df.select(
+            df['*'],
+            F.split(F.col(self.column), self.delimiter).alias(self.newCol)
         )
 
 
@@ -216,19 +442,12 @@ class OneHotEncoder(Transformation):
 
 @dataclass_json
 @dataclass
-class ClusterDF(Transformation):
-    type = "ClusterDF"
-    cluster_col:str = None
-    cluster_list:List[str] = None
-    groupby_col_list: List[str]=None
-    sum_col_list: List[str]=None
-    count_col_list: List[str]=None
+class Normalization(Transformation):
+    type = "Normalization"
+    col: str = None
+    newCol: str = None
 
     def transform(self, df):
-        return df.cluster_df(
-            cluster_col=self.cluster_col,
-            cluster_list=self.cluster_list,
-            groupby_col_list=self.groupby_col_list,
-            sum_col_list=self.sum_col_list,
-            count_col_list=self.count_col_list
-        )
+        return df.normalization(
+            col=self.col,
+            newCol=self.newCol)

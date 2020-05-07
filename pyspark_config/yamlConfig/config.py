@@ -4,10 +4,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import (Any, Union,Type, Optional)
 import yaml
+import os
 import warnings
-import json
+from future.utils import raise_from
 from enum import Enum
 from marshmallow import post_load, Schema
+from pyspark_config.errors import *
 
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.cfg import config
@@ -32,7 +34,7 @@ from dataclasses import (MISSING,
                          )
 
 Json = Union[dict, list, str, int, float, bool, None]
-from yamldataclassconfig import create_file_path_field, build_path
+from pyspark_config.yamlConfig import create_file_path_field, build_path
 
 def build_schema(cls: Type[A],
                  mixin,
@@ -127,6 +129,7 @@ class DataClassJsonMix(DataClassJsonMixin):
                   infer_missing=False) -> A:
         return _decode_dataclass(cls, kvs, infer_missing)
 
+
 def dataclass_json(_cls=None, *, letter_case=None,
                    undefined: Optional[Union[str, Undefined]] = None):
     """
@@ -165,6 +168,7 @@ def _process_class(cls, letter_case, undefined):
     # register cls as a virtual subclass of DataClassJsonMixin
     DataClassJsonMixin.register(cls)
     return cls
+
 
 def _decode_dataclass(cls, kvs, infer_missing):
     if isinstance(kvs, cls):
@@ -260,6 +264,7 @@ def _decode_dataclass(cls, kvs, infer_missing):
 
     return cls(**init_kwargs)
 
+
 def _decode_generic_subsets(type_, value, infer_missing):
     if value is None:
         res = value
@@ -277,7 +282,8 @@ def _decode_generic_subsets(type_, value, infer_missing):
             vs = _decode_items(v_type, value.values(), infer_missing)
             xs = zip(ks, vs)
         else:
-            xs = (_decode_dataclass(getSubclass(type_,v), v, infer_missing) for v in value)
+            xs = (_decode_dataclass(getSubclass(type_,v), v, infer_missing)
+                  for v in value)
 
         # get the constructor if using corresponding generic type in `typing`
         # otherwise fallback on constructing using type_ itself
@@ -301,13 +307,15 @@ def _decode_generic_subsets(type_, value, infer_missing):
             res = value
     return res
 
+
 def getSubclass(cls, values):
     """
     In case one of the fields is called type, the corresponding
     subclass is searched for.
     """
     try:
-        subclass_map = {subclass.type: subclass for subclass in cls.__args__[0].__subclasses__()}
+        subclass_map = {subclass.type: subclass for subclass
+                        in cls.__args__[0].__subclasses__()}
     except:
         raise
     try:
@@ -315,22 +323,32 @@ def getSubclass(cls, values):
     except KeyError:
         raise Exception("Type "+values['type']+" not available.")
 
+
 @dataclass
 class YamlDataClassConfig(DataClassJsonMix, metaclass=ABCMeta):
     """This class implements YAML file load function."""
-    FILE_PATH: Path = create_file_path_field('config.yml')
 
-    def load(self, path: Union[Path, str] = None, path_is_absolute: bool = False):
+    def load(self, path: str, path_is_absolute: bool = False):
         """
         This method loads from YAML file to properties of self instance.
-        Why doesn't load when __init__ is to make the following requirements compatible:
-        1. Access config as global
-        2. Independent on config for development or use config for unit testing when unit testing
+        Args:
+          path: The path in string form; can be relative or absolute.
+          path_is_absolute: indicates whether the path is an absolute path
         """
-        if path is None:
-            path = self.FILE_PATH
-        built_path = build_path(path, path_is_absolute)
-        # pylint: disable=no-member
-        with built_path.open('r', encoding='UTF-8') as yml:
-            dictionary_config = yaml.load(yml)
-        self.__dict__.update(self.schema().load(dictionary_config).__dict__)
+        path_type=Path(path)
+        built_path = build_path(path_type, path_is_absolute)
+        if os.path.exists(path):
+            if path.endswith('.yaml'):
+                with built_path.open('r', encoding='UTF-8') as yml:
+                    dictionary_config = yaml.load(yml)
+            else:
+                raise InvalidTypeError("Configuration file must "
+                                       "be in YAML format: %s"
+                                        % str(built_path))
+        else:
+            raise NotFoundError("No such file or directory: %s"
+                                     % str(built_path))
+
+        self.__dict__.update(
+            self.schema().load(dictionary_config).__dict__
+        )

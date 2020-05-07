@@ -2,10 +2,9 @@ import pyspark
 from pyspark.sql import SparkSession
 from pyspark.conf import SparkConf
 import unittest
-from pyspark_config.process.input.input import Input
-from pyspark_config.spark_utils.spark_session.sparkSession import arranca_spark
-from pyspark_config.process.output import Json, Csv, Parquet
-from pyspark_config.process.transformations import Filter, Select
+from pyspark_config.input.input import Input
+from pyspark_config.output import Json, Csv, Parquet
+from pyspark_config.transformations import Filter, Select
 
 
 class inputTestCase(unittest.TestCase):
