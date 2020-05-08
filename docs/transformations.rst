@@ -43,6 +43,4 @@ The following list contains all transformations with brief descriptions. Further
 
 
 .. _link: add_date\_
-*******
-Transformations
-*******
+hola
