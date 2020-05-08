@@ -42,7 +42,6 @@ The following list contains all transformations with brief descriptions. Further
      - Split a column by a given delimiter.
 
 
-.. code-block:: html
-    :linenos:
+Add Date
+########
 
-    <h1>add date</h1>
