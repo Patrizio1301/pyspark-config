@@ -6,6 +6,7 @@ from pyspark.sql.types import ArrayType, StringType, IntegerType
 from typing import List
 from pyspark.ml.feature import CountVectorizer
 
+
 class DataFrame_Functions(object):
     """
     functions in order to extend the dataFrame class

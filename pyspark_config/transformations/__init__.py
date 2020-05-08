@@ -6,23 +6,23 @@ configured manner.
 
 from .transformations import *
 
-__all__=[
-    'Select',
-    'Filter',
-    'FilterByList',
+__all__ = [
+    'Transformation',
     'Cast',
+    'CollectList',
+    'Concatenate',
     'DayOfMonth',
     'DayOfWeek',
     'DayOfYear',
-    'Normalization',
-    'SortBy',
-    'Concatenate',
-    'Split',
-    'Percentage',
-    'Year',
-    'Month',
-    'CollectList',
+    'Filter',
+    'FilterByList',
+    'GroupBy',
     'ListLength',
-    'OneHotEncoder',
-    'Transformation'
+    'Month',
+    'Normalization',
+    'Percentage',
+    'Select',
+    'SortBy',
+    'Split',
+    'Year'
 ]

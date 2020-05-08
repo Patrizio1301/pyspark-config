@@ -61,8 +61,8 @@ class CollectList(Transformation):
     Args:
     ------
     orderBy: List[String].
-    groupByList: List[String].
-    columnList: List[String].
+    groupBy: List[String].
+    col: List[String].
 
     ---- Example: ----
     CollectList(['country'], ['country'], ['city']).transform(df).show()
@@ -77,12 +77,11 @@ class CollectList(Transformation):
     """
     type = "CollectList"
     orderBy: List[str] = None
-    groupByList: List[str] = None
-    columnList: List[str] = None
+    groupBy: List[str] = None
+    cols: List[str] = None
 
     def transform(self, df) -> DataFrame:
-        w = Window.partitionBy(self.groupByList)\
-            .orderBy(self.orderBy)
+        w = Window.partitionBy(self.groupBy).orderBy(self.orderBy)
 
         def columnwise(df, column):
             new_column_name = '{}_list'.format(column)
@@ -95,10 +94,10 @@ class CollectList(Transformation):
             new_column_name = '{}_list'.format(column)
             return F.max(new_column_name).alias(new_column_name)
 
-        column_list_ = [columnwise_(column) for column in self.columnList]
-        for column in self.columnList:
+        column_list_ = [columnwise_(column) for column in self.cols]
+        for column in self.cols:
             df = columnwise(df, column)
-        return df.groupby(self.groupByList).agg(*column_list_)
+        return df.groupby(self.groupBy).agg(*column_list_)
 
 
 @dataclass_json
@@ -256,7 +255,7 @@ class FilterByList(Transformation):
     values: List[str] = None
 
     def transform(self, df) -> DataFrame:
-        return df.where((F.col(self.col).isin(self.choice_list)))
+        return df.where((F.col(self.col).isin(self.values)))
 
 
 @dataclass_json
@@ -296,20 +295,38 @@ class GroupBy(Transformation):
     [Row(name=u'Alice', age=2, count=1), Row(name=u'Bob', age=5, count=1)]
     """
     type = "GroupBy"
-    groupByCols: List[str] = None
+    groupBy: List[str] = None
     aggregations: List[Aggregation] = None
 
     def transform(self, df) -> DataFrame:
         agg_ = []
         for aggregation in self.aggregations:
             func_=getattr(pyspark.sql.functions, aggregation.func)
-            agg_.append([func_(col) for col in aggregation.cols])
+            agg_+=([func_(col) for col in aggregation.cols])
         return df.groupBy(self.groupBy).agg(*agg_)
 
 
 @dataclass_json
 @dataclass
 class ListLength(Transformation):
+    """
+    Calculates the length of a column of ArrayType.
+
+    Args:
+    ------
+    col: String. Column with ArrayType.
+    colName: String. Column name of column where to advise length of array in 'col'.
+
+    ---- Example: ----
+    ListLength(col='notes', colName='num_notes').transform(df).show()
+    +------------+-----+---------+
+    |       notes| name|num_notes|
+    +------------+-----+---------+
+    |[1, 2, 4, 2]|Alice|        4|
+    |   [3, 4, 5]|  Bob|        3|
+    +------------+-----+---------+
+
+    """
     type = "ListLength"
     col: str = None
     colName: str = None
@@ -334,7 +351,7 @@ class Month(Transformation):
 
     ---- Example: ----
     df = spark.createDataFrame([('2015-04-08',)], ['dt'])
-    Year('dt', 'month').transform(df).collect()
+    Month('dt', 'month').transform(df).collect()
     [Row(dt='2015-04-08', month=3)]
     """
     type = "Month"
@@ -343,6 +360,21 @@ class Month(Transformation):
 
     def transform(self, df) -> DataFrame:
         return df.withColumn(colName=self.colName, col=(F.month(self.date)-1))
+
+
+@dataclass_json
+@dataclass
+class Normalization(Transformation):
+    type = "Normalization"
+    col: str = None
+    newCol: str = None
+
+    def transform(self, df):
+        max=df.agg({"{}".format(self.col): "max"}).collect()[0][0]
+        min = df.agg({"{}".format(self.col): "min"}).collect()[0][0]
+        if max==min:
+            return df.withColumn(self.colName, F.lit(0))
+        return df.withColumn(self.colName, (df[self.col]- min) / (max - min))
 
 
 @dataclass_json
@@ -371,30 +403,6 @@ class Percentage(Transformation):
             colName=self.colName,
             col=df[self.col] / f.sum(f.col(self.col)).over(Window.partitionBy())
         )
-
-
-@dataclass_json
-@dataclass
-class Year(Transformation):
-    """
-    Extract the year of a given date as integer.
-
-    Args:
-    ------
-    date: String. Column with DateType where year to extract from.
-    colName: String. Column name of year content.
-
-    ---- Example: ----
-    df = spark.createDataFrame([('2015-04-08',)], ['dt'])
-    Year('dt', 'year').transform(df).collect()
-    [Row(dt='2015-04-08', year=2015)]
-    """
-    type = "Year"
-    date: str = None
-    colName: str = None
-
-    def transform(self, df) -> DataFrame:
-        return df.withColumn(colName=self.colName, col=F.year(self.date))
 
 
 @dataclass_json
@@ -494,28 +502,23 @@ class Split(Transformation):
 
 @dataclass_json
 @dataclass
-class OneHotEncoder(Transformation):
-    type = "OneHotEncoder"
-    col: str = None
-    newCol: str = None
-    vocabSize: int = None
+class Year(Transformation):
+    """
+    Extract the year of a given date as integer.
 
-    def transform(self, df):
-        return df.one_hot_encoder(
-            col=self.col,
-            newCol=self.newCol,
-            vocabSize=self.vocabSize
-        )
+    Args:
+    ------
+    date: String. Column with DateType where year to extract from.
+    colName: String. Column name of year content.
 
+    ---- Example: ----
+    df = spark.createDataFrame([('2015-04-08',)], ['dt'])
+    Year('dt', 'year').transform(df).collect()
+    [Row(dt='2015-04-08', year=2015)]
+    """
+    type = "Year"
+    date: str = None
+    colName: str = None
 
-@dataclass_json
-@dataclass
-class Normalization(Transformation):
-    type = "Normalization"
-    col: str = None
-    newCol: str = None
-
-    def transform(self, df):
-        return df.normalization(
-            col=self.col,
-            newCol=self.newCol)
+    def transform(self, df) -> DataFrame:
+        return df.withColumn(colName=self.colName, col=F.year(self.date))
