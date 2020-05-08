@@ -10,71 +10,97 @@ The following list contains all transformations with brief descriptions. Further
 
    * - Function
      - Description
-   * - `Add Date`_
+   * - `Cast`_
      - Creates columns for year, month and date of a given column with date type.
    * - add_weekday
      - Creates a numerical column 'weekday' with the corresponding weekday. 
    * - cast
      - Cast the given column to another column type. 
-   * - collect_list
+   * - `CollectList`_
      - Aggregate function: returns a list of objects with duplicates.
-   * - concatenate
+   * - `Concatenate`_
      - Create a column with the indicated columns concatenated with a delimiter (Default: "").
-   * - conditional
+   * - `Conditional`_
      - Return a new `DataFrame` with the input condition satisfied.
-   * - groupby
+   * - `DayOfMonth`_
+     - Creates a numerical column with the corresponding month.
+   * - `DayOfWeek`_
+     - Creates a numerical column with the corresponding weekday.
+   * - `DayOfYear`_
+     - Creates a numerical column with the corresponding day of year.
+   * - `GroupBy`_
      - Group the `DataFrame` using the specified columns, so we can run aggregation on them. See `GroupedData` for all the available aggregate functions.
-   * - filter
+   * - `Filter`_
      - Filter rows using the given condition.
-   * - filter_by_list
+   * - `FilterByList`_
      - Filter rows by values given in a list.
-   * - list_length
+   * - `ListLength`_
      - For each column with list as values, the given list length will be calculated.
-   * - max
-     - Calculates the maximum by each group.
-   * - min
-     - Calculates the minimum by each group.
-   * - select
+   * - `Select`_
      - Creates columns for year, month and date of a given column with date type.   
-   * - sort
+   * - `SortBy`_
      - Return a new `DataFrame` sorted by the specified column(s).
-   * - split
+   * - `Split`_
      - Split a column by a given delimiter.
 
 .. _`Add Date`:
 Add Date
 **********************
 
+.. _`Cast`:
 Cast
 **********************
 
+.. _`Concatenate`:
 Concatenate
 **********************
 
+.. _`CollectList`:
 CollectList
 **********************
 
+.. _`Conditional`:
 Conditional
 **********************
 
+.. _`DayOfMonth`:
+DayOfMonth
+**********************
+
+.. _`DayOfYear`:
+DayOfYear
+**********************
+
+.. _`DayOfWeek`:
+DayOfWeek
+**********************
+
+
+.. _`GroupBy`:
 GroupBy
 **********************
 
+.. _`Filter`:
 Filter
 **********************
 
+.. _`FilterByList`:
 FilterByList
 **********************
 
+.. _`ListLength`:
 ListLength
 **********************
 
+.. _`Select`:
 Select
 **********************
 
+.. _`SortBy`:
 SortBy
 **********************
 
+.. _`Split`:
 Split
 **********************
 
