@@ -45,3 +45,37 @@ The following list contains all transformations with brief descriptions. Further
 Add Date
 **********************
 
+Cast
+**********************
+
+Concatenate
+**********************
+
+CollectList
+**********************
+
+Conditional
+**********************
+
+GroupBy
+**********************
+
+Filter
+**********************
+
+FilterByList
+**********************
+
+ListLength
+**********************
+
+Select
+**********************
+
+SortBy
+**********************
+
+Split
+**********************
+
+
