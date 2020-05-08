@@ -42,5 +42,4 @@ The following list contains all transformations with brief descriptions. Further
      - Split a column by a given delimiter.
 
 
-:ref:`add_date` 
 <h1>code block example</h1>
