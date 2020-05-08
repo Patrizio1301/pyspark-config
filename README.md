@@ -56,7 +56,6 @@ With the input source saved in '../table.parquet', the following code can then b
 
 ```python
 from pyspark_config import Config
-from pathlib import Path
 
 from pyspark_config.transformations.transformations import *
 from pyspark_config.output import *
@@ -64,7 +63,7 @@ from pyspark_config.input import *
 
 config_path="../example.yaml"
 configuration=Config()
-configuration.load(Path(config_path))
+configuration.load(config_path)
 
 configuration.apply()
 ```
