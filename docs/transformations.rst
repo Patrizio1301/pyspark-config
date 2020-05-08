@@ -41,7 +41,7 @@ The following list contains all transformations with brief descriptions. Further
    * - split
      - Split a column by a given delimiter.
 
-
+.. _`Add Date`:
 Add Date
 **********************
 
