@@ -10,7 +10,7 @@ The following list contains all transformations with brief descriptions. Further
 
    * - Function
      - Description
-   * - add_date
+   * - add_date_.
      - Creates columns for year, month and date of a given column with date type.
    * - add_weekday
      - Creates a numerical column 'weekday' with the corresponding weekday. 
@@ -21,9 +21,9 @@ The following list contains all transformations with brief descriptions. Further
    * - concatenate
      - Create a column with the indicated columns concatenated with a delimiter (Default: "").
    * - conditional
-     - Return a new :class:`DataFrame` with the input condition satisfied.
+     - Return a new `DataFrame` with the input condition satisfied.
    * - groupby
-     - Group the :class:`DataFrame` using the specified columns, so we can run aggregation on them. See :class:`GroupedData` for all the available aggregate functions.
+     - Group the `DataFrame` using the specified columns, so we can run aggregation on them. See `GroupedData` for all the available aggregate functions.
    * - filter
      - Filter rows using the given condition.
    * - filter_by_list
@@ -37,7 +37,12 @@ The following list contains all transformations with brief descriptions. Further
    * - select
      - Creates columns for year, month and date of a given column with date type.   
    * - sort
-     - Return a new :class:`DataFrame` sorted by the specified column(s).
+     - Return a new `DataFrame` sorted by the specified column(s).
    * - split
      - Split a column by a given delimiter.
-  
+
+
+.. _add_date:
+*******
+Transformations
+*******

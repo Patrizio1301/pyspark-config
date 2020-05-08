@@ -367,7 +367,7 @@ class Month(Transformation):
 class Normalization(Transformation):
     type = "Normalization"
     col: str = None
-    newCol: str = None
+    colName: str = None
 
     def transform(self, df):
         max=df.agg({"{}".format(self.col): "max"}).collect()[0][0]
@@ -444,9 +444,7 @@ class SortBy(Transformation):
         If a list is specified, length of the list must equal length of the `cols`.
 
     ---- Example: ----
-    df.sort(df.age.desc()).collect()
-    [Row(age=5, name=u'Bob'), Row(age=2, name=u'Alice')]
-    df.sort("age", ascending=False).collect()
+    SortBy("age", ascending=False).transform(df).collect()
     [Row(age=5, name=u'Bob'), Row(age=2, name=u'Alice')]
     df.orderBy(df.age.desc()).collect()
     [Row(age=5, name=u'Bob'), Row(age=2, name=u'Alice')]
@@ -459,13 +457,11 @@ class SortBy(Transformation):
     [Row(age=5, name=u'Bob'), Row(age=2, name=u'Alice')]
     """
     type = "SortBy"
-    column: str = None
+    col: str = None
     ascending: bool = False
 
-    def transform(self, df):
-        return df.sort(
-            self.column,
-            ascending=self.ascending)
+    def transform(self, df) -> DataFrame:
+        return df.sort(self.col, ascending=self.ascending)
 
 
 @dataclass_json
@@ -496,7 +492,7 @@ class Split(Transformation):
     def transform(self, df):
         return df.select(
             df['*'],
-            F.split(F.col(self.column), self.delimiter).alias(self.newCol)
+            F.split(F.col(self.col), self.delimiter).alias(self.colName)
         )
 
 

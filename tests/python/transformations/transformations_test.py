@@ -182,15 +182,95 @@ class MonthTransformation(PySparkTestCase):
         df_result.show()
 
 
-class MonthTransformation(PySparkTestCase):
+class NormalizationTransformation(PySparkTestCase):
 
-    def testMonth(self):
+    def testNormalization(self):
+        """
+        Test if exception is raised, when file does not exist
+        Test if no exception is raised when file exists
+        Test if exception is raised when file type is not yaml
+        """
+        df = self.spark.createDataFrame([(1,), (3,), (5,)], ['amount'])
+        df_result=Normalization(
+            col='amount', colName='amount_normalized'
+        ).transform(df)
+
+        df_result.show()
+
+
+class PercentageTransformation(PySparkTestCase):
+
+    def testPercentage(self):
+        """
+        Test if exception is raised, when file does not exist
+        Test if no exception is raised when file exists
+        Test if exception is raised when file type is not yaml
+        """
+        df = self.spark.createDataFrame([(4,), (2,), (4,)], ['amount'])
+        df_result=Percentage(
+            col='amount', colName='amount_normalized'
+        ).transform(df)
+
+        df_result.show()
+
+
+class SelectTransformation(PySparkTestCase):
+
+    def testSelect(self):
+        """
+        Test if exception is raised, when file does not exist
+        Test if no exception is raised when file exists
+        Test if exception is raised when file type is not yaml
+        """
+        df = self.spark.createDataFrame([(4,), (2,), (4,)], ['amount'])
+        df_result=Select(
+            cols=['amount']
+        ).transform(df)
+
+        df_result.show()
+
+
+class SortByTransformation(PySparkTestCase):
+
+    def testSortBy(self):
+        """
+        Test if exception is raised, when file does not exist
+        Test if no exception is raised when file exists
+        Test if exception is raised when file type is not yaml
+        """
+        df = self.spark.createDataFrame([(2,'Alice'), (7, 'Bob'), (5, 'Bob')], ['age', 'name'])
+        df_result = SortBy(
+            col="age", ascending=False
+        ).transform(df)
+
+        df_result.show()
+
+
+class SplitTransformation(PySparkTestCase):
+
+    def testSplit(self):
+        """
+        Test if exception is raised, when file does not exist
+        Test if no exception is raised when file exists
+        Test if exception is raised when file type is not yaml
+        """
+        df = self.spark.createDataFrame([('ab12cd',)], ['s', ])
+        df_result = Split(
+            col='s', colName='splitted',  delimiter='[0-9]+'
+        ).transform(df)
+
+        df_result.show()
+
+
+class YearTransformation(PySparkTestCase):
+
+    def testYear(self):
         """
         Test if exception is raised, when file does not exist
         Test if no exception is raised when file exists
         Test if exception is raised when file type is not yaml
         """
         df = self.spark.createDataFrame([('2015-04-08',)], ['dt'])
-        df_result=Month(date='dt', colName='month').transform(df)
+        df_result = Year(date='dt', colName='year').transform(df)
 
         df_result.show()
