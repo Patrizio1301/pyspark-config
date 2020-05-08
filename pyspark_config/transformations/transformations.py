@@ -2,6 +2,7 @@
 
 from typing import List, Any, Callable
 from dataclasses import dataclass
+import pyspark
 import pyspark.sql.functions as F
 from pyspark.sql.types import StringType
 from pyspark.sql import DataFrame, Window
@@ -34,7 +35,7 @@ class Cast(Transformation):
     fromType: String. DataType of 'col'.
     toType: String. DataType of 'castedCol'.
 
-    --- Example: ----
+    ---- Example: ----
     Cast('age', 'ages', 'int', 'string').transform(df).collect()
     [Row(age=2), Row(ages=u'2')]
 
@@ -63,7 +64,7 @@ class CollectList(Transformation):
     groupByList: List[String].
     columnList: List[String].
 
-    --- Example: ----
+    ---- Example: ----
     CollectList(['country'], ['country'], ['city']).transform(df).show()
         +-------------+--------------------------+
         |country      |city_list                 |
@@ -115,7 +116,7 @@ class Concatenate(Transformation):
     delimiter: String. Specifies the boundary between separate columns in
         the concatenated sequence.
 
-    --- Example: ----
+    ---- Example: ----
     Concatenate(['name', 'surname'], 'concat', '-').transform(df).collect()
     [Row(name= u'Max', name=u'Muster', concat='uMax-Muster')]
     Concatenate(['name', 'surname'], 'concat').transform(df).collect()
@@ -144,6 +145,7 @@ class DayOfMonth(Transformation):
     date: String. Column with DateType where month to extract from.
     colName: String. Column name of day of month content.
 
+    ---- Example: ----
     df = spark.createDataFrame([('2015-04-08',)], ['dt'])
     DayOfMonth('dt', 'dayOfMonth').transform(df).collect()
     [Row(dt='2015-04-08', dayOfMonth=7)]
@@ -167,6 +169,7 @@ class DayOfYear(Transformation):
     date: String. Column with DateType where month to extract from.
     colName: String. Column name of day of year content.
 
+    ---- Example: ----
     df = spark.createDataFrame([('2015-04-08',)], ['dt'])
     DayOfYear('dt', 'dayOfYear').transform(df).collect()
     [Row(dt='2015-04-08', dayOfYear=97)]
@@ -190,6 +193,7 @@ class DayOfWeek(Transformation):
     date: String. Column with DateType where day of week to extract from.
     colName: String. Column name of day of week content.
 
+    ---- Example: ----
     df = spark.createDataFrame([('2015-04-08',)], ['dt'])
     DayOfWeek('dt', 'dayOfWeek').transform(df).collect()
     [Row(dt='2015-04-08', dayOfWeek=3)]
@@ -214,7 +218,7 @@ class Filter(Transformation):
     ------
     condition: String. A string of SQL expression.
 
-    --- Example: ----
+    ---- Example: ----
     Filter('age > 3').transform(df).collect()
     [Row(age=5, name=u'Bob')]
     Filter('age == 2').transform(df).collect()
@@ -240,7 +244,7 @@ class FilterByList(Transformation):
     values: List[String]. Values which should remain
         in the given column 'col'.
 
-    --- Example: ----
+    ---- Example: ----
     FilterByList('name', ['Bob', 'Max']).transform(df).collect()
     [Row(name=u'Bob'), Row(name=u'Max')]
     FilterByList('name', ['Bob']).transform(df).collect()
@@ -253,6 +257,54 @@ class FilterByList(Transformation):
 
     def transform(self, df) -> DataFrame:
         return df.where((F.col(self.col).isin(self.choice_list)))
+
+
+@dataclass_json
+@dataclass
+class Aggregation:
+    func: str = None
+    cols: List[str] = None
+
+
+@dataclass_json
+@dataclass
+class GroupBy(Transformation):
+    """"
+    Groups the :class:`DataFrame` using the specified columns,
+    so we can run aggregation on them. See :class:`GroupedData`
+    for all the available aggregate functions.
+
+    :func:`groupby` is an alias for :func:`groupBy`.
+
+    Args:
+    ------
+    :param groupBy: list of columns to group by.
+        Each element should be a column name (string) or an expression (:class:`Column`).
+    :param sumBy: list of columns to sum by groups.
+        Each element should be a column name (string) or an expression (:class:`Column`).
+    :param countBy: list of columns to count by groups.
+        Each element should be a column name (string) or an expression (:class:`Column`).
+
+    ---- Example: ----
+    df.groupBy().avg().collect()
+    [Row(avg(age)=3.5)]
+    sorted(df.groupBy('name').agg({'age': 'mean'}).collect())
+    [Row(name=u'Alice', avg(age)=2.0), Row(name=u'Bob', avg(age)=5.0)]
+    sorted(df.groupBy(df.name).avg().collect())
+    [Row(name=u'Alice', avg(age)=2.0), Row(name=u'Bob', avg(age)=5.0)]
+    sorted(df.groupBy(['name', df.age]).count().collect())
+    [Row(name=u'Alice', age=2, count=1), Row(name=u'Bob', age=5, count=1)]
+    """
+    type = "GroupBy"
+    groupByCols: List[str] = None
+    aggregations: List[Aggregation] = None
+
+    def transform(self, df) -> DataFrame:
+        agg_ = []
+        for aggregation in self.aggregations:
+            func_=getattr(pyspark.sql.functions, aggregation.func)
+            agg_.append([func_(col) for col in aggregation.cols])
+        return df.groupBy(self.groupBy).agg(*agg_)
 
 
 @dataclass_json
@@ -280,6 +332,7 @@ class Month(Transformation):
     date: String. Column with DateType where month to extract from.
     colName: String. Column name of month content.
 
+    ---- Example: ----
     df = spark.createDataFrame([('2015-04-08',)], ['dt'])
     Year('dt', 'month').transform(df).collect()
     [Row(dt='2015-04-08', month=3)]
@@ -304,7 +357,7 @@ class Percentage(Transformation):
     col: String. Numerical Column which the percentage is calculated for
     colName: String.
 
-    --- Example: ----
+    ---- Example: ----
 
     """
     type = "Percentage"
@@ -331,6 +384,7 @@ class Year(Transformation):
     date: String. Column with DateType where year to extract from.
     colName: String. Column name of year content.
 
+    ---- Example: ----
     df = spark.createDataFrame([('2015-04-08',)], ['dt'])
     Year('dt', 'year').transform(df).collect()
     [Row(dt='2015-04-08', year=2015)]
@@ -348,10 +402,13 @@ class Year(Transformation):
 class Select(Transformation):
     """Projects a set of expressions and returns a new :class:`DataFrame`.
 
+    Args:
+    ------
     :param cols: list of column names (string) or expressions (:class:`Column`).
         If one of the column names is '*', that column is expanded to include all columns
         in the current :class:`DataFrame`.
 
+    ---- Example: ----
     df.select('*').collect()
     [Row(age=2, name=u'Alice'), Row(age=5, name=u'Bob')]
     df.select('name', 'age').collect()
@@ -371,11 +428,14 @@ class Select(Transformation):
 class SortBy(Transformation):
     """Returns a new :class:`DataFrame` sorted by the specified column(s).
 
+    Args:
+    ------
     :param cols: list of :class:`Column` or column names to sort by.
     :param ascending: boolean or list of boolean (default ``True``).
         Sort ascending vs. descending. Specify list for multiple sort orders.
         If a list is specified, length of the list must equal length of the `cols`.
 
+    ---- Example: ----
     df.sort(df.age.desc()).collect()
     [Row(age=5, name=u'Bob'), Row(age=2, name=u'Alice')]
     df.sort("age", ascending=False).collect()
@@ -408,13 +468,21 @@ class Split(Transformation):
 
     .. note:: pattern is a string represent the regular expression.
 
+    Args:
+    ------
+    col: String.
+    colName: String.
+    delimiter: String.
+
+
+    ---- Example: ----
     df = spark.createDataFrame([('ab12cd',)], ['s',])
     df.select(split(df.s, '[0-9]+').alias('s')).collect()
     [Row(s=[u'ab', u'cd'])]
     """
     type = "Split"
-    column: str = None
-    newCol: str = None
+    col: str = None
+    colName: str = None
     delimiter: str = None
 
     def transform(self, df):
