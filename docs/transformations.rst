@@ -10,7 +10,7 @@ The following list contains all transformations with brief descriptions. Further
 
    * - Function
      - Description
-   * - add_date_
+   * - add_date_.
      - Creates columns for year, month and date of a given column with date type.
    * - add_weekday
      - Creates a numerical column 'weekday' with the corresponding weekday. 
