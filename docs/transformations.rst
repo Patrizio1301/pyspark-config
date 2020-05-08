@@ -42,7 +42,7 @@ The following list contains all transformations with brief descriptions. Further
      - Split a column by a given delimiter.
 
 
-.. _add_date:
+.. _link: add_date\_
 *******
 Transformations
 *******
