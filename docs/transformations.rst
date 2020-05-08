@@ -43,4 +43,4 @@ The following list contains all transformations with brief descriptions. Further
 
 
 .. _add_date:
-this should work
+this should work :ref:`add_date`,
