@@ -145,3 +145,12 @@ class Parquet(Source):
 
     def apply(self, spark_session):
         return spark_session.read.parquet(self.parquet_path)
+
+
+@dataclass
+class TFRecord(Source):
+    type = "TFRecord"
+    path: str = None
+
+    def apply(self, spark_session):
+        return spark_session.read.parquet(self.parquet_path)

@@ -1,31 +1,107 @@
 """ Transformation Testing """
 
-import unittest
-from pyspark_config.config import Config
-from pyspark_config.errors import *
-from pyspark_config.input import *
-from pyspark_config.yamlConfig.config import getSubclass
-from tests.resource.constants import SOURCES
+from pyspark.sql.types import *
+
 from pyspark_config.transformations import *
 from tests.python.pyspark_utils import PySparkTestCase
 from pyspark_config.transformations.transformations import Aggregation
+
+
+def getType(schema: StructType, col: str) -> DataType:
+    fields=[field for field in schema.fields if field.name == col]
+    if len(fields)==0:
+        raise AttributeError("No column with name %s available." %(col))
+    elif len(fields)==1:
+        return next(iter(fields)).dataType
+    else:
+        raise AttributeError("Ambiguous columns with name %s." %(col))
 
 
 class CastTransformations(PySparkTestCase):
 
     def testCastIntToString(self):
         """
-        Test if exception is raised, when file does not exist
-        Test if no exception is raised when file exists
-        Test if exception is raised when file type is not yaml
+        Test if column of IntegerType can be transformed to StringType.
         """
         df = self.spark.createDataFrame([(1,)], ['age'])
         df_result = Cast(
             col='age', castedCol='age_str', fromType='int', toType='string'
         ).transform(df)
 
-        df_expected = self.spark.createDataFrame([(1,"1")], ['age', 'age_str'])
+        df_expected = self.spark.createDataFrame([(1,'1')], ['age', 'age_str'])
 
+        self.assertIsInstance(getType(df_result.schema, 'age_str'), StringType)
+        self.assertEqual(df_result.collect(), df_expected.collect())
+
+    def testCastIntToFloat(self):
+        """
+        Test if column of IntegerType can be transformed to FloatType.
+        """
+        df = self.spark.createDataFrame([(1,)], ['age'])
+        df_result = Cast(
+            col='age', castedCol='age_float', fromType='int', toType='float'
+        ).transform(df)
+
+        df_expected = self.spark.createDataFrame([(1,float(1))], ['age', 'age_float'])
+
+        self.assertIsInstance(getType(df_result.schema, 'age_float'), FloatType)
+        self.assertEqual(df_result.collect(), df_expected.collect())
+
+    def testCastIntToLong(self):
+        """
+        Test if column of IntegerType can be transformed to LongType.
+        """
+        df = self.spark.createDataFrame([(1,)], ['age'])
+        df_result = Cast(
+            col='age', castedCol='age_long', fromType='int', toType='long'
+        ).transform(df)
+
+        df_expected = self.spark.createDataFrame([(1,int(1.0))], ['age', 'age_long'])
+
+        self.assertIsInstance(getType(df_result.schema, 'age_long'), LongType)
+        self.assertEqual(df_result.collect(), df_expected.collect())
+
+    def testCastIntToDouble(self):
+        """
+        Test if column of IntegerType can be transformed to DoubleType.
+        """
+        df = self.spark.createDataFrame([(1,)], ['age'])
+        df_result = Cast(
+            col='age', castedCol='age_long', fromType='int', toType='double'
+        ).transform(df)
+
+        df_expected = self.spark.createDataFrame([(1,float(1.0))], ['age', 'age_double'])
+
+        self.assertIsInstance(getType(df_result.schema, 'age_long'), DoubleType)
+        self.assertEqual(df_result.collect(), df_expected.collect())
+
+    def testCastIntToBoolean(self):
+        """
+        Test if column of IntegerType can be transformed to LongType.
+        """
+        df = self.spark.createDataFrame([(1,), (0,)], ['age'])
+        df_result = Cast(
+            col='age', castedCol='age_bool', fromType='int', toType='boolean'
+        ).transform(df)
+
+        df_expected = self.spark.createDataFrame(
+            [(1,True), (0, False)], ['age', 'age_bool'])
+
+        self.assertIsInstance(getType(df_result.schema, 'age_bool'), BooleanType)
+        self.assertEqual(df_result.collect(), df_expected.collect())
+
+    def testCastStringToInt(self):
+        """
+        Test if column of StringType can be transformed to IntegerType.
+        """
+        df = self.spark.createDataFrame([('1',)], ['age_str'])
+        df_result = Cast(
+            col='age_str', castedCol='age', fromType='string', toType='int'
+        ).transform(df)
+
+        df_expected = self.spark.createDataFrame([('1', 1)], ['age_str', 'age'])
+
+        self.assertIsInstance(getType(df_result.schema, 'age'), IntegerType)
         self.assertEqual(df_result.collect(), df_expected.collect())
 
 
