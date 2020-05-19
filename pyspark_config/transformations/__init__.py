@@ -8,6 +8,7 @@ from .transformations import *
 
 __all__ = [
     'Transformation',
+    'Base64',
     'Cast',
     'CollectList',
     'Concatenate',

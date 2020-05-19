@@ -14,20 +14,26 @@ from pyspark_config.output.output import Output
 from pyspark_config.yamlConfig.config import YamlDataClassConfig
 from pyspark_config.spark_utils.dataframe_extended import DataFrame_Extended
 
+
 @dataclass
 class Config(YamlDataClassConfig):
     input: Input =None
     transformations: List[Transformation] = None
     output: List[Output] =None
 
+
+    @property
+    def spark_config(self):
+        return SparkConf().setAppName("test") \
+            .setMaster('local') \
+            .set("spark.jars", "jars/spark-tensorflow-connector_2.11-1.6.0.jar, jars/scala-logging_2.11-3.1.0.jar") \
+            .set('spark.driver.extraJavaOptions', '-Dderby.system.home=/tmp/derby')
+
     @property
     def spark_session(self):
-        conf= SparkConf().setAppName("test") \
-            .setMaster('local') \
-            .set('spark.driver.extraJavaOptions', '-Dderby.system.home=/tmp/derby')
         return SparkSession.builder\
             .enableHiveSupport() \
-            .config(conf=conf) \
+            .config(conf=self.spark_config) \
             .getOrCreate()
 
     def __apply_input__(self):
@@ -52,8 +58,9 @@ class Config(YamlDataClassConfig):
         of the performed transformations.
 
         """
+        jvm_=self.spark_config._jvm
         for trans in self.transformations:
-            df=trans.transform(df=df)
+            df=trans.transform(df=df, jvm=jvm_)
         return df
 
     def __get_outputs__(self, df):

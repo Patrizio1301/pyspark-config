@@ -3,11 +3,11 @@ from pyspark.sql import SparkSession
 from pyspark.conf import SparkConf
 import unittest
 from pyspark_config.input.input import Input
-from pyspark_config.output import Json, Csv, Parquet
+from pyspark_config.output import Json, Csv, Parquet, TFRecord
 from pyspark_config.transformations import Filter, Select
 
 
-class inputTestCase(unittest.TestCase):
+class OutputTestCase(unittest.TestCase):
     def setUp(self):
         spark=SparkSession.builder.config(conf=SparkConf()).getOrCreate()
         df=spark.createDataFrame([(1, 'foo'), (2, 'bar'),],['A', 'B'])
@@ -30,7 +30,22 @@ class inputTestCase(unittest.TestCase):
             path='/home/patrizio/PycharmProjects/pyspark-config/tests/resource/output_path',
         ).save(df)
 
+    @staticmethod
+    def test_TFRecord():
+        spark = SparkSession\
+            .builder\
+            .config(
+                conf=SparkConf().set("spark.jars", "../../../jars/spark-tensorflow-connector_2.11-1.6.0.jar")
+            ).getOrCreate()
+        df = spark.createDataFrame([(1, 'foo'), (2, 'bar'), ], ['A', 'B'])
+        TFRecord(
+            name='test_tfrecord',
+            path='/home/patrizio/PycharmProjects/pyspark-config/tests/resource/output_path',
+        ).save(df)
 
+        path="/home/patrizio/PycharmProjects/pyspark-config/tests/resource/output_path/test_tfrecord.tfrecord"
+        df = spark.read.format("tfrecords").option("recordType", "Example").load(path)
+        df.show()
 
     @staticmethod
     def test_Csv_with_trans():

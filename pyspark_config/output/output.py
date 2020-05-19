@@ -77,3 +77,15 @@ class Parquet(Output):
         df.coalesce(1).write.parquet(name, mode='overwrite')
         return logger.info('The output {} has been '
                            'created sucessfully.'.format(self.name))
+
+
+@dataclass_json
+@dataclass
+class TFRecord(Output):
+    type="TFRecord"
+
+    def save(self, df: DataFrame_Extended):
+        name='{}/{}.tfrecord'.format(self.path, self.name)
+        df.write.format("tfrecords").option("recordType", "Example").save(name)
+        return logger.info('The output {} has been '
+                           'created sucessfully.'.format(self.name))

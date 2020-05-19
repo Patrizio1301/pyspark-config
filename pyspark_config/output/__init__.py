@@ -11,5 +11,6 @@ __all__ = [
     'Output',
     'Csv',
     'Json',
+    'TFRecord',
     'Parquet'
 ]

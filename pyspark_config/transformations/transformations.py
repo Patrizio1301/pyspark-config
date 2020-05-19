@@ -22,6 +22,25 @@ class Transformation:
         raise NotImplementedError("Each transformation must have a transform method.")
 
 
+#@dataclass_json
+#@dataclass
+#class Base64(Transformation):
+#    type = "Base64"
+#    col: str = None
+#    colName: str = None
+#    isEncryped : bool =None
+
+#    def transform(self, df, jvm) -> DataFrame:
+#        col_=df._jdf.col(self.col)
+#        isEncrypted_=jvm.scala.Some(self.isEncryped)
+#        base64CaseClass = jvm.transformation.transformations.Base64(self.colName, isEncrypted_)
+#        result = jvm.transformation.transformations.column.Base64Imp.transformation(base64CaseClass, col_)
+#        if result.isLeft():
+#            raise Exception(result)
+#        else:
+#            return result
+
+
 @dataclass_json
 @dataclass
 class Cast(Transformation):
